@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bảo An Tín Dụng · OCB</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* PTI Design Tokens — từ Figma iPTI */
+  --brand:#03377b;--brand-h:#02295e;--brand-p:#e8eef7;--brand-l:#c5d4eb;
+  --orange:#f47920;--orange-h:#e06b15;
+  --green:#057a55;--green-p:#ecfdf5;
+  --red:#ff1f1f;--red-p:#fdf2f2;
+  --amber:#92400e;--amber-p:#fffbeb;--amber-b:#fcd34d;
+  /* Content tokens */
+  --c-default:#070707;
+  --c-secondary:#707070;
+  --c-disable:rgba(7,7,7,0.18);
+  --c-white:#ffffff;
+  --c-brand:#03377b;
+  --c-negative:#ff1f1f;
+  --c-neutral-medium:#999;
+  /* Background tokens */
+  --bg-white:#ffffff;
+  --bg-level1:#ffffff;
+  --bg-input:#ffffff;
+  --bg-input-disabled:rgba(7,7,7,0.08);
+  --bg-neutral:rgba(7,7,7,0.08);
+  --bg-page:#f5f5f5;
+  /* Border tokens */
+  --border-faint:rgba(7,7,7,0.18);
+  --border-brand:#03377b;
+  --divider:rgba(7,7,7,0.08);
+  /* Semantic */
+  --blue:#03377b;--blue-h:#02295e;--blue-p:#e8eef7;--blue-l:#c5d4eb;
+  --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;
+  --g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--g900:#111827;
+  --sw:220px;
+  --font:'Mulish',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --s1:0 2px 8px rgba(38,38,40,0.05);--s2:0 4px 16px rgba(38,38,40,0.10);
+  --r:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:var(--font);background:var(--bg-page);color:var(--g900);min-height:100vh;display:flex}
+
+/* SIDEBAR */
+.sb{width:var(--sw);background:var(--bg-white);border-right:1px solid var(--divider);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:30}
+.sb-logo{padding:14px 18px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:10px}
+.sb-lm{width:36px;height:36px;background:linear-gradient(135deg,#1a56db,#f47920);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:white;flex-shrink:0}
+.sb-lt{font-size:15px;font-weight:700;color:var(--g800)}
+.sb-lt span{color:var(--orange)}
+.sb-nav{flex:1;padding:10px 0;overflow-y:auto}
+.sb-sec{padding:4px 12px 2px;font-size:10px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-top:8px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:1px 8px;border-radius:7px;font-size:13px;font-weight:500;color:var(--g600);cursor:pointer;transition:.15s;user-select:none}
+.sb-item:hover{background:var(--g50);color:var(--g800)}
+.sb-item.active{background:var(--brand-p);color:var(--brand);font-weight:700}
+.sb-sub .sb-item{font-size:12.5px;margin-left:16px}
+.sb-user{padding:12px 16px;border-top:1px solid var(--g100);display:flex;align-items:center;gap:10px}
+.sb-av{width:30px;height:30px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0}
+.sb-uname{font-size:12.5px;font-weight:600;color:var(--g700)}
+.sb-urole{font-size:11px;color:var(--g400)}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--bg-white);border-bottom:1px solid var(--divider);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.bc{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--c-neutral-medium);font-weight:500}
+.bc span:last-child{color:var(--brand);font-weight:700}
+.bc-sep{color:var(--g300)}
+
+/* STAGE PROGRESS BAR */
+.stepper{background:white;padding:0 28px;border-bottom:1px solid var(--divider)}
+.stage-bar{display:flex;align-items:flex-start;padding:18px 0 0;justify-content:center;gap:0}
+.stage-wrap{display:flex;flex-direction:column;align-items:center;flex:1;max-width:220px;position:relative}
+.stage-node{display:flex;align-items:center;width:100%;justify-content:center;position:relative}
+.stage-dot{width:36px;height:36px;border-radius:50%;background:var(--bg-neutral);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--c-secondary);flex-shrink:0;transition:.25s;z-index:2;position:relative}
+.stage-wrap.done .stage-dot{background:var(--brand);color:white}
+.stage-wrap.active .stage-dot{background:var(--brand);color:white;box-shadow:0 0 0 4px var(--brand-p)}
+.stage-lbl{font-size:12.5px;font-weight:500;color:var(--c-secondary);text-align:center;margin-top:7px;line-height:1.35;transition:.2s;padding-bottom:10px}
+.stage-wrap.active .stage-lbl{font-weight:700;color:var(--brand)}
+.stage-wrap.done .stage-lbl{color:var(--g600)}
+.stage-line{flex:1;height:2px;background:var(--bg-neutral);margin-top:18px;transition:.3s;align-self:flex-start}
+.stage-line.done{background:var(--brand)}
+
+/* Sub-steps — chạy ngầm, không hiển thị */
+.sub-steps,.sub-lbl-row{display:none!important}
+.sub-dot,.sub-line,.sub-lbl{}
+
+/* CONTENT */
+.content{flex:1;padding:24px 28px 100px;max-width:1000px}
+.page-title{font-size:20px;font-weight:700;color:var(--c-default);margin-bottom:2px}
+.page-sub{font-size:13px;color:var(--g400);margin-bottom:22px}
+
+/* SCREEN */
+.screen{display:none}.screen.active{display:block}
+
+/* SECTION */
+.sec{margin-bottom:24px}
+.sec-title{font-size:16px;font-weight:700;color:var(--c-default);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:8px}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:12.5px;font-weight:700;color:var(--c-default)}
+.fg label .req{color:var(--c-negative);margin-left:2px}
+input,select,textarea{width:100%;padding:9px 12px;border:1.5px solid var(--g300);border-radius:8px;font-family:var(--font);font-size:13px;color:var(--g900);background:white;outline:none;transition:.15s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(3,55,123,.10)}
+input.ro{background:var(--bg-input-disabled);color:var(--c-default);cursor:not-allowed;border-color:transparent}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+.hint{font-size:12px;color:var(--c-secondary);margin-top:3px}
+.fval{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;padding:2px 8px;border-radius:20px;margin-top:4px;font-weight:500}
+.fv-ok{background:var(--green-p);color:var(--green)}
+.fv-err{background:var(--red-p);color:var(--red)}
+.fv-warn{background:var(--amber-p);color:var(--amber)}
+.grid{display:grid;gap:14px;margin-bottom:14px}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:1fr 1fr 1fr}
+.c4{grid-template-columns:1fr 1fr 1fr 1fr}
+
+/* RADIO */
+.rg{display:flex;gap:8px;flex-wrap:wrap}
+.rb{display:flex;align-items:center;gap:7px;padding:8px 14px;border:1.5px solid var(--g300);border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--g600);transition:.15s;user-select:none;background:white}
+.rb:hover{border-color:var(--brand)}
+.rb.on{border-color:var(--brand);background:var(--brand-p);color:var(--brand);font-weight:700}
+.rdot{width:13px;height:13px;border-radius:50%;border:2px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.rb.on .rdot::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--brand);display:block}
+
+/* HQ — câu hỏi sức khỏe dạng radio */
+.hq{padding:14px 16px;border:1.5px solid var(--g200);border-radius:10px;margin-bottom:10px;transition:.18s;background:white}
+.hq.ok{border-color:#00b96b;background:#f0fdf4}
+.hq.ng{border-color:var(--red);background:var(--red-p)}
+.hq.warn{border-color:var(--amber-b);background:var(--amber-p)}
+.hq-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hq-q{font-size:12.5px;line-height:1.65;color:var(--g700);flex:1}
+.hq-q strong{display:block;font-size:11px;color:var(--g500);font-weight:500;margin-bottom:2px}
+.hq-btns{display:flex;gap:8px;margin-top:10px}
+.hqb{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--g300);background:white;font-family:var(--font);font-size:12.5px;font-weight:600;color:var(--g600);cursor:pointer;transition:.15s}
+.hqb.no.on{border-color:var(--green);background:var(--green-p);color:var(--green)}
+.hqb.yes.on{border-color:var(--red);background:var(--red-p);color:var(--red)}
+
+/* ALERT */
+.alert{display:flex;gap:9px;padding:11px 14px;border-radius:8px;font-size:12.5px;line-height:1.6;margin-bottom:12px}
+.alert strong{font-weight:600;display:block;margin-bottom:1px}
+.a-blue{background:var(--brand-p);color:var(--brand)}
+.a-red{background:var(--red-p);color:var(--red)}
+.a-green{background:var(--green-p);color:var(--green)}
+.a-warn{background:var(--amber-p);color:var(--amber);border:1px solid var(--amber-b)}
+.ai{flex-shrink:0;margin-top:2px}
+
+/* MÀN 2 — Layout */
+.m2-wrap{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start}
+
+/* Package cards */
+/* pkg-card CSS removed — replaced by dropdown */
+.fee-panel{background:white;border:1px solid var(--g200);border-radius:10px;overflow:hidden;position:sticky;top:105px;box-shadow:var(--s2)}
+.fp-head{padding:16px 18px 0}
+.fp-body{padding:0 18px 16px}
+.fp-ig{margin-bottom:12px}
+.fp-ig label{font-size:11.5px;font-weight:600;color:var(--g600);margin-bottom:5px;display:block}
+.fp-ig label .req{color:var(--red)}
+.fp-ig input,.fp-ig select{font-size:12.5px;padding:8px 11px}
+.fp-rows{border-top:1px solid var(--g100);padding-top:11px;margin-top:6px}
+.fp-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0}
+.fp-rl{color:var(--g400)}
+.fp-rv{color:var(--g700);font-weight:500}
+.fp-total{margin-top:8px;padding-top:8px;border-top:1.5px solid var(--g200);display:flex;justify-content:space-between;align-items:center}
+.fp-tl{font-size:13px;font-weight:700;color:var(--g800)}
+.fp-tv{font-size:15px;font-weight:800;color:var(--brand);font-family:var(--mono)}
+.fp-note{margin-top:10px;padding:8px 11px;background:var(--blue-p);border-radius:7px;font-size:11px;color:#1e40af;line-height:1.5}
+
+/* Xem chi tiết link */
+.detail-link{font-size:12px;color:var(--brand);font-weight:700;text-decoration:underline;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:6px;background:none;border:none;font-family:var(--font);padding:0}
+.detail-link:hover{text-decoration:underline}
+
+/* MÀN 3 */
+.m3-wrap{display:grid;grid-template-columns:1fr 240px;gap:20px;align-items:start}
+.sum-panel{background:white;border:1px solid var(--g200);border-radius:10px;overflow:hidden;position:sticky;top:110px}
+.sum-head{background:var(--brand);padding:13px 15px}
+.sum-pkg{color:white;font-size:14px;font-weight:700}
+.sum-rate{color:rgba(255,255,255,.6);font-size:11px;margin-top:2px}
+.sum-body{padding:13px 15px}
+.sum-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--g100)}
+.sum-row:last-child{border-bottom:none}
+.sum-l{color:var(--g400)}
+.sum-v{font-weight:500;color:var(--g700);text-align:right}
+.sum-fee{background:var(--brand-p);border-radius:8px;padding:10px 12px;margin-top:10px;text-align:center}
+.sum-fl{font-size:11px;color:var(--brand);margin-bottom:2px;font-weight:500}
+.sum-fa{font-size:19px;font-weight:800;color:var(--brand);font-family:var(--mono)}
+
+/* Collapsible section */
+.coll{border:1px solid var(--divider);border-radius:12px;overflow:hidden;margin-bottom:14px;background:var(--bg-white);box-shadow:var(--s1)}
+.coll-hd{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.coll-hd:hover{background:var(--g50)}
+.coll-htitle{font-size:13px;font-weight:600;color:var(--g700);display:flex;align-items:center;gap:8px}
+.coll-chev{width:16px;height:16px;color:var(--g400);transition:.2s}
+.coll.open .coll-chev{transform:rotate(180deg)}
+.coll-body{display:none;padding:16px;border-top:1px solid var(--g100)}
+.coll.open .coll-body{display:block}
+
+/* Toggle section */
+.toggle-sec{margin-bottom:14px}
+.toggle-lbl{font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block}
+.cond-block{border:1.5px dashed var(--g300);border-radius:10px;padding:16px;background:var(--g50);margin-top:10px}
+
+/* MÀN 4 */
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.rv-group{background:#fafafa;border-radius:8px;padding:14px}
+.rv-gtitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--g400);margin-bottom:10px}
+.rv-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--g200)}
+.rv-row:last-child{border-bottom:none}
+.rv-l{color:var(--g500)}
+.rv-v{font-weight:500;color:var(--g800);text-align:right}
+.fee-bar{background:var(--g900);border-radius:8px;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.fee-bar-l{color:rgba(255,255,255,.6);font-size:12px}
+.fee-bar-a{color:white;font-size:20px;font-weight:800;font-family:var(--mono)}
+
+/* Upload */
+.upload-box{border:2px dashed var(--g300);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:.15s;background:var(--g50)}
+.upload-box:hover{border-color:var(--blue);background:var(--blue-p)}
+.upload-box.has-file{border-color:var(--green);background:var(--green-p);border-style:solid}
+.upload-icon{width:40px;height:40px;background:var(--g200);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.upload-box.has-file .upload-icon{background:#d1fae5}
+.upload-title{font-size:13px;font-weight:600;color:var(--g700)}
+.upload-sub{font-size:11.5px;color:var(--g400);margin-top:3px}
+.upload-file-name{font-size:12px;color:var(--green);font-weight:600;margin-top:6px}
+
+/* QR màn 5 */
+.qr-wrap{display:flex;gap:24px;align-items:flex-start}
+.qr-box{width:160px;height:160px;border:1.5px solid var(--g200);border-radius:10px;display:flex;align-items:center;justify-content:center;background:white;flex-shrink:0}
+.qr-timer{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--g400);justify-content:center;margin-top:7px}
+.qblink{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.tf-box{background:var(--g50);border:1px solid var(--g200);border-radius:8px;padding:12px}
+.tf-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--g400);margin-bottom:8px}
+.tf-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--g100)}
+.tf-row:last-child{border-bottom:none}
+.tf-l{color:var(--g400);width:40%}
+.tf-v{font-weight:500;color:var(--g700)}
+.tf-v.hi{color:var(--blue);font-weight:700;font-family:var(--mono)}
+.status-bar{display:flex;align-items:center;gap:8px;padding:10px 13px;border-radius:8px;font-size:12.5px;font-weight:600;margin-bottom:12px}
+.st-wait{background:var(--amber-p);color:var(--amber)}
+.st-ok{background:var(--green-p);color:var(--green)}
+.gcn-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:white;border:1.5px solid var(--g200);border-radius:10px;margin-bottom:8px}
+.gcn-ico{width:38px;height:38px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gcn-title{font-size:13px;font-weight:600;color:var(--g800)}
+.gcn-sub{font-size:11px;color:var(--g400);margin-top:2px}
+
+/* STICKY CTA */
+.sticky-cta{position:fixed;bottom:0;left:var(--sw);right:0;padding:13px 28px;background:white;border-top:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;z-index:20}
+.cta-left{display:flex;align-items:center;gap:8px}
+.cta-step{font-size:12px;color:var(--g400)}
+.cta-fee{font-size:13px;color:var(--g600);font-family:var(--mono);font-weight:500}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;border:none;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-p{background:var(--orange);color:white}.btn-p:hover{background:var(--orange-h);transform:translateY(-1px);box-shadow:0 4px 12px rgba(244,121,32,.25)}
+.btn-p:disabled{background:var(--g300);color:var(--g500);cursor:not-allowed;transform:none;box-shadow:none}
+.btn-s{background:white;color:var(--brand);border:1.5px solid var(--brand)}.btn-s:hover{background:var(--brand-p)}
+.btn-g{background:transparent;color:var(--g400);border:none;font-size:12.5px;padding:10px 12px}
+.btn-ok{background:#00b96b;color:white}.btn-ok:hover{background:#009e5a}
+.btn-bl{background:var(--brand);color:white}.btn-bl:hover{background:var(--brand-h)}
+.btn-sm{padding:6px 13px;font-size:12px}
+
+.rv-fi{display:flex;flex-direction:column;gap:3px;min-width:200px;flex:1}
+.rv-fl{font-size:13px;font-weight:400;color:var(--c-secondary);line-height:1.4}
+.rv-fv{font-size:14px;font-weight:700;color:var(--c-default);line-height:1.4}
+/* MODAL */
+.mover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(2px)}
+.mover.open{display:flex}
+.modal{background:white;border-radius:12px;width:100%;max-width:480px;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-hd{padding:14px 18px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:13px;font-weight:700;color:var(--g800)}
+.modal-close{width:26px;height:26px;border-radius:5px;background:var(--g100);border:none;cursor:pointer;font-size:16px;color:var(--g500);display:flex;align-items:center;justify-content:center}
+.modal-body{flex:1;overflow-y:auto;padding:14px 18px}
+.ql-st{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--blue);margin:12px 0 6px}
+.ql-st:first-child{margin-top:0}
+.ql-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--g100);font-size:12.5px}
+.ql-row:last-child{border-bottom:none}
+.ql-n{color:var(--g500);flex:1;padding-right:10px}
+.ql-v{color:var(--g800);font-weight:500;text-align:right}
+.dis-list{list-style:none;display:flex;flex-direction:column;gap:1px}
+.dis-list li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--g700);padding:6px 0;border-bottom:1px solid var(--g100)}
+.dis-list li:last-child{border-bottom:none}
+.dis-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px}
+
+/* Badge */
+.badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.b-new{background:#fff7ed;color:var(--orange)}
+.b-req{background:var(--red-p);color:var(--red)}
+.b-warn{background:var(--amber-p);color:var(--amber)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sb">
+  <div class="sb-logo">
+    <svg width="52" height="28" viewBox="0 0 52 28" xmlns="http://www.w3.org/2000/svg">
+      <!-- i -->
+      <text x="0" y="22" font-family="Georgia,serif" font-style="italic" font-weight="700" font-size="22" fill="var(--orange)">i</text>
+      <!-- p -->
+      <text x="9" y="22" font-family="Georgia,serif" font-weight="700" font-size="22" fill="var(--brand)">p</text>
+      <!-- t -->
+      <text x="22" y="22" font-family="Georgia,serif" font-weight="700" font-size="22" fill="var(--brand)">t</text>
+      <!-- i -->
+      <text x="32" y="22" font-family="Georgia,serif" font-weight="700" font-size="22" fill="var(--brand)">i</text>
+    </svg>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Menu</div>
+    <div class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Trang chủ</div>
+    <div class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Quản lý đơn</div>
+    <div class="sb-sec" style="margin-top:12px">Cấp đơn</div>
+    <div class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>PTISOS<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:auto"><path d="M6 9l6 6 6-6"/></svg></div>
+    <div class="sb-sub">
+      <div class="sb-item">Ô tô</div>
+      <div class="sb-item">Xe máy</div>
+    </div>
+    <div class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>PTICARE<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:auto"><path d="M6 9l6 6 6-6"/></svg></div>
+    <div class="sb-sub">
+      <div class="sb-item active">Bảo An Tín Dụng</div>
+      <div class="sb-item">Du lịch quốc tế</div>
+    </div>
+  </nav>
+  <div class="sb-user">
+    <div class="sb-av">NL</div>
+    <div><div class="sb-uname">Nguyễn Thị Lan</div><div class="sb-urole">OCB Khối RB</div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="bc">
+      <span>Trang chủ</span>
+      <span class="bc-sep">/</span>
+      <span>Cấp đơn</span>
+      <span class="bc-sep">/</span>
+      <span>Bảo An Tín Dụng OCB</span>
+    </div>
+  </div>
+
+  <!-- PAGE TITLE -->
+  <div style="padding:16px 28px 0;background:white;border-bottom:1px solid var(--divider)">
+    <div class="page-title" style="margin-bottom:12px">Bảo An Tín Dụng OCB</div>
+  </div>
+
+  <!-- STAGE PROGRESS BAR -->
+  <div class="stepper">
+    <div class="stage-bar">
+
+      <!-- Stage 1: Khảo sát cơ bản -->
+      <div class="stage-wrap active" id="stage0">
+        <div class="stage-node">
+          <div class="stage-dot" id="sdot0">1</div>
+        </div>
+        <div class="stage-lbl">Khảo sát<br>cơ bản</div>
+      </div>
+
+      <div class="stage-line" id="sline0"></div>
+
+      <!-- Stage 2: Chào giá -->
+      <div class="stage-wrap" id="stage1">
+        <div class="stage-node">
+          <div class="stage-dot" id="sdot1">2</div>
+        </div>
+        <div class="stage-lbl">Chào giá</div>
+      </div>
+
+      <div class="stage-line" id="sline1"></div>
+
+      <!-- Stage 3: Hoàn thiện hồ sơ (màn 2–6) -->
+      <div class="stage-wrap" id="stage2" style="flex:3;max-width:none">
+        <div class="stage-node">
+          <div class="stage-dot" id="sdot2">3</div>
+        </div>
+        <div class="stage-lbl">Hoàn thiện hồ sơ</div>
+
+        <!-- Sub-steps: hiện khi stage này active hoặc done -->
+        <div class="sub-steps" id="sub-steps-wrap">
+          <div class="sub-dot" id="ss0"></div>
+          <div class="sub-line" id="ssl0"></div>
+          <div class="sub-dot" id="ss1"></div>
+          <div class="sub-line" id="ssl1"></div>
+          <div class="sub-dot" id="ss2"></div>
+          <div class="sub-line" id="ssl2"></div>
+          <div class="sub-dot" id="ss3"></div>
+          <div class="sub-line" id="ssl3"></div>
+          <div class="sub-dot" id="ss4"></div>
+        </div>
+        <div class="sub-lbl-row" id="sub-lbl-row">
+          <div class="sub-lbl" id="sslbl0">Hoàn thiện<br>hồ sơ</div>
+          <div style="min-width:28px"></div>
+          <div class="sub-lbl" id="sslbl1">Thanh toán<br>&amp; Hóa đơn</div>
+          <div style="min-width:28px"></div>
+          <div class="sub-lbl" id="sslbl2">Review<br>đơn</div>
+          <div style="min-width:28px"></div>
+          <div class="sub-lbl" id="sslbl3">Cung cấp<br>giấy tờ</div>
+          <div style="min-width:28px"></div>
+          <div class="sub-lbl" id="sslbl4">Thanh<br>toán</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="content">
+
+<!-- ═══ MÀN 1 — KHẢO SÁT CƠ BẢN ═══ -->
+<div class="screen active" id="s0">
+  <!-- BLOCK 1: Thông tin khai thác -->
+  <div class="sec">
+    <div class="sec-title">Thông tin khai thác</div>
+    <div class="grid c2" style="margin-bottom:0">
+      <div class="fg">
+        <label>Mã cán bộ chăm sóc</label>
+        <select id="m1-cbcs">
+          <option value="NVA" selected>Nguyễn Văn A</option>
+          <option value="NTB">Nguyễn Thị B</option>
+          <option value="TVC">Trần Văn C</option>
+          <option value="LTD">Lê Thị D</option>
+          <option value="PTH">Phạm Thị H</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCK 2: Thời hạn bảo hiểm -->
+  <div class="sec">
+    <div class="sec-title">Thời hạn bảo hiểm</div>
+    <div class="grid c2">
+      <div class="fg">
+        <label>Ngày bắt đầu hiệu lực <span class="req">*</span></label>
+        <input type="date" id="fp-start" value="2026-05-15" onchange="calcEnd();validateAgeDuration()">
+      </div>
+      <div class="fg">
+        <label>Ngày kết thúc hiệu lực <span class="req">*</span></label>
+        <input type="date" id="fp-end-dt" value="2027-05-15" onchange="calcFeeFromDates();validateAgeDuration()">
+      </div>
+    </div>
+    <div id="age-dur-result" style="margin-top:10px"></div>
+  </div>
+
+  <!-- BLOCK 3: Thông tin người được bảo hiểm -->
+  <div class="sec">
+    <div class="sec-title">Thông tin người được bảo hiểm</div>
+    <div class="grid c2">
+      <div class="fg">
+        <label>Ngày sinh NĐBH <span class="req">*</span></label>
+        <input type="date" id="nd-dob" oninput="checkAge()">
+        <div id="age-r"></div>
+      </div>
+      <div class="fg">
+        <label>Quốc tịch NĐBH <span class="req">*</span></label>
+        <select id="nd-nation" onchange="checkNation()">
+          <option>Việt Nam</option>
+          <option>Nước ngoài (cư trú hợp pháp tại VN)</option>
+        </select>
+        <div id="nation-warn" style="display:none"><span class="fval fv-warn">⚠ Cần xác nhận giấy tờ cư trú ở Bước 3</span></div>
+      </div>
+    </div>
+    <div class="grid c2" style="margin-top:4px">
+      <div class="fg">
+        <label>CCCD / Hộ chiếu NĐBH <span class="req">*</span></label>
+        <input id="nd-cccd" placeholder="Nhập số CCCD hoặc hộ chiếu" oninput="checkCCCD()" maxlength="12">
+        <div id="cccd-r"></div>
+      </div>
+    </div>
+    <div class="grid c2" style="margin-top:4px">
+      <div class="fg">
+        <label>NĐBH có hợp đồng tín dụng không? <span class="req">*</span></label>
+        <div class="rg" style="margin-top:2px">
+          <div class="rb" id="loan-yes" onclick="setLoanType('yes')"><div class="rdot"></div>Có</div>
+          <div class="rb" id="loan-no" onclick="setLoanType('no')"><div class="rdot"></div>Không</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Câu hỏi thẩm định sức khỏe <span class="req">*</span></div>
+
+    <!-- Q1 -->
+    <div class="hq" id="hq1">
+      <div class="hq-top">
+        <div class="hq-q"><strong>Câu 1</strong>NĐBH có bị bệnh tâm thần, bệnh phong, bệnh động kinh không?</div>
+      </div>
+      <div class="hq-btns">
+        <button class="hqb no" id="hq1-no" onclick="ansHQ(1,'no')">Không</button>
+        <button class="hqb yes" id="hq1-yes" onclick="ansHQ(1,'yes')">Có</button>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="hq" id="hq2">
+      <div class="hq-top">
+        <div class="hq-q"><strong>Câu 2</strong>NĐBH có bị thương tật vĩnh viễn trên 80% không?</div>
+      </div>
+      <div class="hq-btns">
+        <button class="hqb no" id="hq2-no" onclick="ansHQ(2,'no')">Không</button>
+        <button class="hqb yes" id="hq2-yes" onclick="ansHQ(2,'yes')">Có</button>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="hq" id="hq3">
+      <div class="hq-top">
+        <div class="hq-q"><strong>Câu 3</strong>NĐBH đã bao giờ bị công ty bảo hiểm từ chối bảo hiểm hoặc từ chối tái tục HĐBH sức khỏe tương tự không?</div>
+      </div>
+      <div class="hq-btns">
+        <button class="hqb no" id="hq3-no" onclick="ansHQ(3,'no')">Không</button>
+        <button class="hqb yes" id="hq3-yes" onclick="ansHQ(3,'yes')">Có</button>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="hq" id="hq4">
+      <div class="hq-top">
+        <div class="hq-q">
+          <strong>Câu 4</strong>
+          Trong 3 năm qua, NĐBH đã được chuẩn đoán, phát hiện hoặc điều trị bệnh lý nào trong danh sách sau không?
+        </div>
+        <span class="fval" id="hq4-tag" style="display:none"></span>
+      </div>
+      <button class="detail-link" onclick="openModal('dis-modal')">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+        Xem danh sách bệnh BATD
+      </button>
+      <div class="hq-btns">
+        <button class="hqb no" id="hq4-no" onclick="ansHQ(4,'no')">Không</button>
+        <button class="hqb yes" id="hq4-yes" onclick="ansHQ(4,'yes')">Có</button>
+      </div>
+    </div>
+
+    <div id="hq-reject" style="display:none" class="alert a-red">
+      <div class="ai"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div>
+      <div><strong>Không đủ điều kiện cấp đơn</strong>NĐBH không đáp ứng điều kiện tham gia bảo hiểm. Không thể tiếp tục.</div>
+    </div>
+    <div id="q4-dong-warn" style="display:none" class="alert a-warn">
+      <div class="ai"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+      <div><strong>Chỉ Gói Đồng được áp dụng</strong>NĐBH có bệnh lý trong danh sách BATD. Ở Bước 2 chỉ được chọn Gói Đồng.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MÀN 2 — CHÀO GIÁ ═══ -->
+<div class="screen" id="s1">
+  <div class="m2-wrap">
+
+    <!-- COL LEFT: Form -->
+    <div>
+      <div class="sec">
+        <div class="sec-title">Số tiền bảo hiểm</div>
+        <div class="grid c2" style="margin-bottom:0">
+          <div class="fg">
+            <label>Số tiền bảo hiểm (STBH) <span class="req">*</span></label>
+            <input id="fp-stbh" value="500,000,000" oninput="calcPkgFee()" placeholder="VNĐ">
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">Chọn gói bảo hiểm <span class="req">*</span></div>
+        <div class="grid c2" style="margin-bottom:10px">
+          <div class="fg">
+            <label>Gói bảo hiểm <span class="req">*</span></label>
+            <select id="pkg-select" onchange="selectPkgFromDropdown(this.value)">
+              <option value="">-- Chọn gói --</option>
+            </select>
+            <div id="pkg-filter-hint" class="hint"></div>
+          </div>
+        </div>
+        <div id="pkg-detail-row" style="display:none;margin-top:4px">
+          <button class="detail-link" onclick="openPkgModal(curPkg)">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+            Xem chi tiết quyền lợi gói đã chọn
+          </button>
+        </div>
+        <div id="age-pkg-warn" style="display:none;margin-top:12px" class="alert a-warn">
+          <div class="ai"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+          <div><strong>Hạn chế tuổi theo gói</strong> NĐBH 66–70 tuổi chỉ được chọn Gói Đồng hoặc Gói Bạc, STBH tối đa 500 triệu.</div>
+        </div>
+        <div id="q4-warn-s1" style="display:none;margin-top:12px" class="alert a-warn">
+          <div class="ai"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+          <div><strong>Chỉ Gói Đồng được áp dụng</strong> NĐBH có bệnh lý trong danh sách BATD.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COL RIGHT: Fee panel sticky -->
+    <div>
+      <div class="fee-panel">
+        <div class="fp-head">
+          <div style="font-size:16px;font-weight:700;color:var(--c-default);margin-bottom:14px">Phí bảo hiểm</div>
+        </div>
+        <div class="fp-body">
+          <div class="fp-rows">
+            <div class="fp-row" style="padding:10px 0">
+              <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng phí bảo hiểm</div>
+              <div class="fp-rv" id="fpr-total" style="font-size:13px;font-weight:700;color:var(--orange);white-space:nowrap">—</div>
+            </div>
+            <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+            <div style="padding:10px 0">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Thù lao người bán <span style="color:var(--c-secondary);font-size:11px">ⓘ</span></div>
+                <div style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">********** VNĐ</div>
+              </div>
+              <div style="font-size:12px;color:var(--c-secondary);margin-top:3px">Tỷ lệ: **</div>
+            </div>
+            <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+            <div class="fp-row" style="padding:10px 0">
+              <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng thanh toán người bán <span style="color:var(--c-secondary);font-size:11px">ⓘ</span></div>
+              <div class="fp-rv" style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">********** VNĐ</div>
+            </div>
+            <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+            <div class="fp-row" style="padding:10px 0">
+              <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng thanh toán của khách hàng</div>
+              <div class="fp-rv" id="fpr-kh" style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="screen" id="s2">
+  <div class="m3-wrap">
+    <div>
+
+      <!-- BMBH -->
+      <div class="coll open" id="coll-bmbh">
+        <div class="coll-hd" onclick="toggleColl('bmbh')">
+          <div class="coll-htitle">
+            <svg width="14" height="14" fill="none" stroke="#1a56db" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            Bên mua bảo hiểm (BMBH)
+          </div>
+          <svg class="coll-chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="coll-body">
+          <div class="fg" style="margin-bottom:12px">
+            <label>Loại khách hàng <span class="req">*</span></label>
+            <div class="rg">
+              <div class="rb on" id="bmbh-cn" onclick="setBMBH('cn')"><div class="rdot"></div>Cá nhân</div>
+              <div class="rb" id="bmbh-dn" onclick="setBMBH('dn')"><div class="rdot"></div>Doanh nghiệp</div>
+              <div class="rb" id="bmbh-pdn" onclick="setBMBH('pdn')"><div class="rdot"></div>Phi doanh nghiệp</div>
+            </div>
+          </div>
+          <div id="bmbh-cn-form">
+            <div class="grid c2">
+              <div class="fg"><label>Họ và tên <span class="req">*</span></label><input id="bmbh-name" placeholder="Họ và tên BMBH"></div>
+              <div class="fg"><label>Số điện thoại <span class="req">*</span></label><input id="bmbh-phone" placeholder="0xxx xxx xxx"></div>
+            </div>
+            <div class="grid c2">
+              <div class="fg"><label>Email</label><input id="bmbh-email" placeholder="email@gmail.com"></div>
+              <div class="fg"><label>Địa chỉ</label><input id="bmbh-addr" placeholder="Địa chỉ thường trú"></div>
+            </div>
+          </div>
+          <div id="bmbh-dn-form" style="display:none">
+            <div class="grid c3">
+              <div class="fg"><label>Tên doanh nghiệp <span class="req">*</span></label><input placeholder="Tên công ty"></div>
+              <div class="fg"><label>Mã số thuế <span class="req">*</span></label><input placeholder="MST"></div>
+              <div class="fg"><label>Người đại diện <span class="req">*</span></label><input placeholder="Họ và tên"></div>
+            </div>
+            <div class="grid c3">
+              <div class="fg"><label>Số điện thoại đại diện <span class="req">*</span></label><input placeholder="SĐT"></div>
+              <div class="fg"><label>Địa chỉ trụ sở <span class="req">*</span></label><input placeholder="Địa chỉ"></div>
+              <div class="fg"><label>Email</label><input placeholder="email@congty.com"></div>
+            </div>
+          </div>
+          <div id="bmbh-pdn-form" style="display:none">
+            <div class="grid c3">
+              <div class="fg"><label>Mã số thuế <span class="req">*</span></label><input placeholder="MST tổ chức"></div>
+              <div class="fg"><label>Tên tổ chức / DN <span class="req">*</span></label><input placeholder="Tên đầy đủ"></div>
+              <div class="fg"><label>Số điện thoại <span class="req">*</span></label><input placeholder="SĐT"></div>
+            </div>
+            <div class="grid c2">
+              <div class="fg"><label>Địa chỉ <span class="req">*</span></label><input placeholder="Địa chỉ trụ sở"></div>
+              <div class="fg"><label>Email</label><input placeholder="email@tochuc.com"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NĐBH -->
+      <div class="coll open" id="coll-ndbn">
+        <div class="coll-hd" onclick="toggleColl('ndbn')">
+          <div class="coll-htitle">
+            <svg width="14" height="14" fill="none" stroke="#1a56db" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Người được bảo hiểm (NĐBH)
+          </div>
+          <svg class="coll-chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="coll-body">
+          <div class="fg" style="margin-bottom:12px">
+            <label>Mối quan hệ với BMBH <span class="req">*</span></label>
+            <select id="nd-rel" onchange="handleRel()">
+              <option value="banthan">Bản thân</option>
+              <option value="vo_chong">Vợ / Chồng</option>
+              <option value="con">Con</option>
+              <option value="cha_me">Cha / Mẹ</option>
+              <option value="khac">Khác</option>
+            </select>
+          </div>
+          <div id="nd-banthan-note" style="display:none"></div>
+          <div id="nd-other-note" style="display:none"></div>
+          <div class="grid c3">
+            <div class="fg"><label>Họ và tên <span class="req">*</span></label><input id="nd-name" placeholder="Họ và tên NĐBH"></div>
+            <div class="fg"><label>Số CCCD / HC <span class="req">*</span></label><input id="nd-cccd-s3" class="ro" placeholder="Auto fill từ Bước 1" readonly></div>
+            <div class="fg"><label>Số điện thoại <span class="req">*</span></label><input id="nd-phone" placeholder="0xxx xxx xxx"></div>
+          </div>
+          <div class="grid c3">
+            <div class="fg"><label>Ngày sinh</label><input type="date" class="ro" id="nd-dob-s3" readonly></div>
+            <div class="fg"><label>Giới tính</label><select><option>Nam</option><option>Nữ</option></select></div>
+            <div class="fg"><label>Quốc tịch</label><input class="ro" value="Việt Nam" readonly></div>
+          </div>
+          <div class="grid c2">
+            <div class="fg"><label>Email</label><input id="nd-email" placeholder="email@gmail.com"></div>
+            <div class="fg"><label>Địa chỉ <span class="req">*</span></label><input id="nd-addr" placeholder="Địa chỉ thường trú"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HĐ Tín dụng -->
+      <div class="coll open" id="coll-hdtd">
+        <div class="coll-hd" onclick="toggleColl('hdtd')">
+          <div class="coll-htitle">
+            <svg width="14" height="14" fill="none" stroke="#1a56db" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            Hợp đồng tín dụng
+          </div>
+          <svg class="coll-chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="coll-body">
+          <div id="hdtd-sync-note" style="display:none"></div>
+          <div id="hdtd-form" class="cond-block">
+            <div class="grid c3">
+              <div class="fg"><label>Số HĐ vay <span class="req">*</span></label><input id="hdtd-sohd" placeholder="Số hợp đồng vay"></div>
+              <div class="fg"><label>Ngày giải ngân <span class="req">*</span></label><input type="date" value="2026-05-07"></div>
+              <div class="fg"><label>Ngày đáo hạn <span class="req">*</span></label><input type="date" value="2031-05-07"></div>
+            </div>
+            <div class="grid c2">
+              <div class="fg"><label>Số tiền giải ngân <span class="req">*</span></label><input id="hdtd-amount" placeholder="VNĐ" oninput="fmtHdtdAmount(this)"></div>
+            </div>
+          </div>
+          <div id="hdtd-no-note" style="display:none" class="alert a-warn" style="margin-top:10px;margin-bottom:0">
+            <div class="ai"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg></div>
+            <div>GCNBH phát hành theo mẫu <strong>Khách hàng khác</strong> (không kèm thông tin khoản vay).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NTH -->
+      <div class="coll open" id="coll-nth">
+        <div class="coll-hd" onclick="toggleColl('nth')">
+          <div class="coll-htitle">
+            <svg width="14" height="14" fill="none" stroke="#1a56db" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Người thụ hưởng (NTH) <span class="badge b-new">Tối đa 2 NTH</span>
+          </div>
+          <svg class="coll-chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="coll-body">
+          <!-- NTH 1 — auto theo HĐ TD -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">NTH 1</div>
+            <!-- Có HĐ TD: OCB mặc định -->
+            <div id="nth1-ocb">
+              <div class="grid c3">
+                <div class="fg"><label>Tên tổ chức</label><input class="ro" value="Ngân hàng TMCP Phương Đông (OCB)" readonly></div>
+                <div class="fg"><label>Chi nhánh</label>
+                  <select id="nth1-chinhanh">
+                    <optgroup label="Hà Nội">
+                      <option>CN Hà Nội</option>
+                      <option selected>CN Hoàn Kiếm</option>
+                      <option>CN Cầu Giấy</option>
+                      <option>CN Đống Đa</option>
+                      <option>CN Hai Bà Trưng</option>
+                      <option>CN Long Biên</option>
+                    </optgroup>
+                    <optgroup label="TP. Hồ Chí Minh">
+                      <option>CN TP. Hồ Chí Minh</option>
+                      <option>CN Bình Thạnh</option>
+                      <option>CN Tân Bình</option>
+                      <option>CN Quận 7</option>
+                      <option>CN Quận 1</option>
+                      <option>CN Gò Vấp</option>
+                    </optgroup>
+                    <optgroup label="Miền Trung">
+                      <option>CN Đà Nẵng</option>
+                      <option>CN Huế</option>
+                      <option>CN Quảng Nam</option>
+                      <option>CN Bình Định</option>
+                    </optgroup>
+                    <optgroup label="Miền Tây">
+                      <option>CN Cần Thơ</option>
+                      <option>CN An Giang</option>
+                      <option>CN Kiên Giang</option>
+                    </optgroup>
+                    <optgroup label="Miền Đông">
+                      <option>CN Bình Dương</option>
+                      <option>CN Đồng Nai</option>
+                      <option>CN Vũng Tàu</option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Không HĐ TD: chọn loại + form tương ứng -->
+            <div id="nth1-walkin" style="display:none">
+              <div class="fg" style="margin-bottom:10px">
+                <label>Loại NTH</label>
+                <div class="rg">
+                  <div class="rb on" id="nth1-cn" onclick="setNTH1('cn')"><div class="rdot"></div>Cá nhân</div>
+                  <div class="rb" id="nth1-dn" onclick="setNTH1('dn')"><div class="rdot"></div>Doanh nghiệp</div>
+                  <div class="rb" id="nth1-pdn" onclick="setNTH1('pdn')"><div class="rdot"></div>Phi doanh nghiệp</div>
+                </div>
+              </div>
+              <div class="grid c2" id="nth1-cn-form">
+                <div class="fg"><label>Họ và tên <span class="req">*</span></label><input placeholder="Họ và tên NTH 1"></div>
+                <div class="fg"><label>CCCD / HC / Mã số định danh <span class="req">*</span></label><input placeholder="CCCD 12 số hoặc HC hoặc Mã số định danh"></div>
+              </div>
+              <div class="grid c2" id="nth1-dn-form" style="display:none">
+                <div class="fg"><label>Tên DN / Tổ chức <span class="req">*</span></label><input placeholder="Tên đầy đủ"></div>
+                <div class="fg"><label>Mã số thuế / Định danh</label><input placeholder="MST"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NTH 2 -->
+          <div id="nth2-wrap" style="display:none;margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">NTH 2</div>
+            <div class="fg" style="margin-bottom:10px" id="nth2-type-wrap">
+              <label>Loại NTH</label>
+              <div class="rg">
+                <div class="rb on" id="nth2-cn" onclick="setNTH2('cn')"><div class="rdot"></div>Cá nhân</div>
+                <div class="rb" id="nth2-dn" onclick="setNTH2('dn')"><div class="rdot"></div>Doanh nghiệp</div>
+                <div class="rb" id="nth2-pdn" onclick="setNTH2('pdn')"><div class="rdot"></div>Phi doanh nghiệp</div>
+              </div>
+            </div>
+            <!-- HĐ TD: cá nhân -->
+            <div class="grid c3" id="nth2-cn-form" style="display:none">
+              <div class="fg"><label>Họ và tên</label><input placeholder="Họ và tên NTH 2"></div>
+              <div class="fg"><label>CCCD / HC</label><input placeholder="CCCD 12 số hoặc HC"></div>
+            </div>
+            <div class="grid c2" id="nth2-dn-form" style="display:none">
+              <div class="fg"><label>Tên DN / Tổ chức</label><input placeholder="Tên đầy đủ"></div>
+              <div class="fg"><label>Mã số thuế / Định danh</label><input placeholder="MST"></div>
+            </div>
+            <!-- Không HĐ TD: chọn loại + form tương ứng -->
+            <div id="nth2-walkin-form" style="display:none">
+              <div class="fg" style="margin-bottom:10px">
+                <label>Loại NTH</label>
+                <div class="rg">
+                  <div class="rb on" id="nth2wk-cn" onclick="setNTH2wk('cn')"><div class="rdot"></div>Cá nhân</div>
+                  <div class="rb" id="nth2wk-dn" onclick="setNTH2wk('dn')"><div class="rdot"></div>Doanh nghiệp</div>
+                  <div class="rb" id="nth2wk-pdn" onclick="setNTH2wk('pdn')"><div class="rdot"></div>Phi doanh nghiệp</div>
+                </div>
+              </div>
+              <div class="grid c2" id="nth2wk-cn-form">
+                <div class="fg"><label>Họ và tên</label><input placeholder="Họ và tên NTH 2"></div>
+                <div class="fg"><label>CCCD / HC / Mã số định danh</label><input placeholder="CCCD 12 số hoặc HC hoặc Mã số định danh"></div>
+              </div>
+              <div class="grid c2" id="nth2wk-dn-form" style="display:none">
+                <div class="fg"><label>Tên DN / Tổ chức</label><input placeholder="Tên đầy đủ"></div>
+                <div class="fg"><label>Mã số thuế / Định danh</label><input placeholder="MST"></div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-s btn-sm" id="btn-add-nth2" onclick="addNTH2()" style="font-size:12px">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Thêm NTH 2
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Summary sidebar -->
+    <div>
+      <div class="fee-panel" style="position:sticky;top:105px">
+        <div class="fp-head">
+          <div style="font-size:16px;font-weight:700;color:var(--c-default);margin-bottom:14px">Phí bảo hiểm</div>
+        </div>
+        <div class="fp-body">
+          <div class="fp-rows">
+            <div class="fp-row" style="padding:10px 0">
+              <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng phí bảo hiểm</div>
+              <div class="fp-rv" id="sb-fee" style="font-size:13px;font-weight:700;color:var(--orange);white-space:nowrap">7,500,000 đ</div>
+            </div>
+            <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+            <div style="padding:10px 0">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Thù lao người bán <span style="color:var(--c-secondary);font-size:11px">ⓘ</span></div>
+                <div style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">********** VNĐ</div>
+              </div>
+              <div style="font-size:12px;color:var(--c-secondary);margin-top:3px">Tỷ lệ: **</div>
+            </div>
+            <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+            <div class="fp-row" style="padding:10px 0">
+              <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng TT người bán <span style="color:var(--c-secondary);font-size:11px">ⓘ</span></div>
+              <div class="fp-rv" style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">********** VNĐ</div>
+            </div>
+            <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+            <div class="fp-row" style="padding:10px 0">
+              <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng TT của khách hàng</div>
+              <div class="fp-rv" id="sb-fee-kh" style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">7,500,000 đ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MÀN 4 — THANH TOÁN & HÓA ĐƠN ═══ -->
+<div class="screen" id="s3">
+  <div class="m3-wrap">
+    <div>
+
+      <!-- Hình thức thanh toán -->
+      <div class="coll open" id="coll-payment">
+        <div class="coll-hd" onclick="toggleColl('payment')">
+          <div class="coll-htitle">
+            <svg width="14" height="14" fill="none" stroke="#1a56db" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            Hình thức thanh toán &amp; Xuất hóa đơn
+          </div>
+          <svg class="coll-chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="coll-body">
+
+          <!-- Hình thức thanh toán -->
+          <div class="fg" style="margin-bottom:20px">
+            <label>Hình thức thanh toán <span class="req">*</span></label>
+            <div class="rg" style="margin-top:8px">
+              <div class="rb on" id="pay-now"><div class="rdot"></div>Thanh toán ngay</div>
+            </div>
+          </div>
+
+          <div style="height:1px;background:var(--divider);margin-bottom:20px"></div>
+
+          <!-- Xuất hóa đơn -->
+          <div class="fg">
+            <label>Xuất hóa đơn <span class="req">*</span></label>
+            <div class="rg" style="margin-top:8px">
+              <div class="rb on" id="inv-none" onclick="setInvoice('none')"><div class="rdot"></div>Không xuất hóa đơn</div>
+              <div class="rb" id="inv-buyer" onclick="setInvoice('buyer')"><div class="rdot"></div>Xuất hóa đơn cho bên mua bảo hiểm</div>
+              <div class="rb" id="inv-insured" onclick="setInvoice('insured')"><div class="rdot"></div>Xuất hóa đơn cho người được bảo hiểm</div>
+            </div>
+          </div>
+
+          <!-- Sub-fields khi chọn xuất hóa đơn -->
+          <div id="inv-fields" style="display:none;margin-top:16px">
+            <div class="grid c2">
+              <div class="fg">
+                <label id="inv-name-label">Bên mua bảo hiểm</label>
+                <input id="inv-name-val" class="ro" value="Nguyễn Thị Lan" readonly>
+              </div>
+              <div class="fg">
+                <label>Email nhận hóa đơn <span class="req">*</span></label>
+                <input id="inv-email" placeholder="email@gmail.com">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Summary sidebar -->
+    <div>
+      <div class="fee-panel" style="position:sticky;top:105px">
+        <div class="fp-head">
+          <div style="font-size:16px;font-weight:700;color:var(--c-default);margin-bottom:14px">Phí bảo hiểm</div>
+        </div>
+        <div class="fp-body">
+          <div class="fp-rows">
+            <div class="fp-row" style="padding:10px 0">
+              <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng phí bảo hiểm</div>
+              <div class="fp-rv" id="sb-fee2" style="font-size:13px;font-weight:700;color:var(--orange);white-space:nowrap">7,500,000 đ</div>
+            </div>
+            <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+            <div style="padding:10px 0">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Thù lao người bán <span style="color:var(--c-secondary);font-size:11px">ⓘ</span></div>
+                <div style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">********** VNĐ</div>
+              </div>
+              <div style="font-size:12px;color:var(--c-secondary);margin-top:3px">Tỷ lệ: **</div>
+            </div>
+            <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+            <div class="fp-row" style="padding:10px 0">
+              <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng TT người bán <span style="color:var(--c-secondary);font-size:11px">ⓘ</span></div>
+              <div class="fp-rv" style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">********** VNĐ</div>
+            </div>
+            <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+            <div class="fp-row" style="padding:10px 0">
+              <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng TT của khách hàng</div>
+              <div class="fp-rv" style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap" id="sb-fee2-kh">7,500,000 đ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MÀN 5 — REVIEW ĐƠN ═══ -->
+<div class="screen" id="s4">
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start">
+
+    <!-- Main content -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- Thông tin khai thác -->
+      <div style="background:white;border-radius:16px;padding:16px;box-shadow:var(--s1)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-size:16px;font-weight:700;color:var(--brand)">Thông tin khai thác</div>
+          <svg width="18" height="18" fill="none" stroke="var(--c-secondary)" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px">
+          <div class="rv-fi"><div class="rv-fl">Mã cán bộ chăm sóc</div><div class="rv-fv" id="rv-cbcs">Nguyễn Văn A</div></div>
+        </div>
+      </div>
+
+      <!-- Thông tin khoản vay -->
+      <div id="rv-loan-block" style="background:white;border-radius:16px;padding:16px;box-shadow:var(--s1)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-size:16px;font-weight:700;color:var(--brand)">Thông tin khoản vay</div>
+          <svg width="18" height="18" fill="none" stroke="var(--c-secondary)" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px">
+          <div class="rv-fi"><div class="rv-fl">Số hợp đồng vay</div><div class="rv-fv" id="rv-so-hd">HĐV123456</div></div>
+          <div class="rv-fi"><div class="rv-fl">Số tiền giải ngân</div><div class="rv-fv">2,000,000,000 đ</div></div>
+          <div class="rv-fi"><div class="rv-fl">Ngày giải ngân</div><div class="rv-fv">28/10/2023</div></div>
+          <div class="rv-fi"><div class="rv-fl">Ngày đáo hạn</div><div class="rv-fv">28/10/2028</div></div>
+        </div>
+      </div>
+
+      <!-- Thông tin chương trình BH -->
+      <div style="background:white;border-radius:16px;padding:16px;box-shadow:var(--s1)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-size:16px;font-weight:700;color:var(--brand)">Thông tin chương trình bảo hiểm</div>
+          <svg width="18" height="18" fill="none" stroke="var(--c-secondary)" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px">
+          <div class="rv-fi"><div class="rv-fl">Gói sản phẩm</div><div class="rv-fv" id="rv-pkg-v">Gói Vàng</div></div>
+          <div class="rv-fi"><div class="rv-fl">Số tiền bảo hiểm</div><div class="rv-fv" id="rv-stbh-v">500,000,000 đ</div></div>
+          <div class="rv-fi"><div class="rv-fl">Thời điểm bắt đầu hiệu lực</div><div class="rv-fv">08:00 - 07/05/2026</div></div>
+          <div class="rv-fi"><div class="rv-fl">Thời điểm kết thúc hiệu lực</div><div class="rv-fv" id="rv-end-v">08:00 - 07/05/2027</div></div>
+        </div>
+      </div>
+
+      <!-- Thông tin khách hàng -->
+      <div style="background:white;border-radius:16px;padding:16px;box-shadow:var(--s1)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-size:16px;font-weight:700;color:var(--brand)">Thông tin khách hàng</div>
+          <svg width="18" height="18" fill="none" stroke="var(--c-secondary)" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <!-- NĐBH -->
+          <div style="border:1px solid var(--divider);border-radius:8px;padding:14px">
+            <div style="font-size:14px;font-weight:700;color:var(--c-default);margin-bottom:12px">Người được bảo hiểm</div>
+            <div style="display:flex;flex-wrap:wrap;gap:16px">
+              <div class="rv-fi"><div class="rv-fl">Loại khách hàng</div><div class="rv-fv">Cá nhân</div></div>
+              <div class="rv-fi"><div class="rv-fl">Họ và tên</div><div class="rv-fv">Nguyễn Thị Lan</div></div>
+              <div class="rv-fi"><div class="rv-fl">Ngày sinh</div><div class="rv-fv">15/06/1985</div></div>
+              <div class="rv-fi"><div class="rv-fl">CCCD / Hộ chiếu</div><div class="rv-fv">0123456789</div></div>
+              <div class="rv-fi"><div class="rv-fl">Số điện thoại</div><div class="rv-fv">0965 123 895</div></div>
+              <div class="rv-fi"><div class="rv-fl">Quốc tịch</div><div class="rv-fv">Việt Nam</div></div>
+            </div>
+          </div>
+          <!-- BMBH -->
+          <div style="border:1px solid var(--divider);border-radius:8px;padding:14px">
+            <div style="font-size:14px;font-weight:700;color:var(--c-default);margin-bottom:12px">Bên mua bảo hiểm</div>
+            <div style="display:flex;flex-wrap:wrap;gap:16px">
+              <div class="rv-fi"><div class="rv-fl">Loại khách hàng</div><div class="rv-fv">Cá nhân</div></div>
+              <div class="rv-fi"><div class="rv-fl">Họ và tên</div><div class="rv-fv">Nguyễn Thị Lan</div></div>
+              <div class="rv-fi"><div class="rv-fl">Số điện thoại</div><div class="rv-fv">0965 123 895</div></div>
+              <div class="rv-fi"><div class="rv-fl">Địa chỉ</div><div class="rv-fv">32 Giảng Võ, Cát Linh, Hà Nội</div></div>
+            </div>
+          </div>
+          <!-- NTH -->
+          <div style="border:1px solid var(--divider);border-radius:8px;padding:14px">
+            <div style="font-size:14px;font-weight:700;color:var(--c-default);margin-bottom:12px">Người thụ hưởng</div>
+            <div style="margin-bottom:10px">
+              <div style="font-size:13px;font-weight:700;color:var(--c-default);margin-bottom:8px">1. NTH 1</div>
+              <div style="display:flex;flex-wrap:wrap;gap:16px">
+                <div class="rv-fi"><div class="rv-fl">Tên tổ chức</div><div class="rv-fv">Ngân hàng TMCP OCB</div></div>
+                <div class="rv-fi"><div class="rv-fl">Chi nhánh</div><div class="rv-fv">Chi nhánh OCB</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thông tin thanh toán -->
+      <div style="background:white;border-radius:16px;padding:16px;box-shadow:var(--s1)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div style="font-size:16px;font-weight:700;color:var(--brand)">Thông tin thanh toán</div>
+          <svg width="18" height="18" fill="none" stroke="var(--c-secondary)" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="border:1px solid var(--divider);border-radius:8px;padding:12px">
+            <div style="font-size:14px;font-weight:700;color:var(--c-default);margin-bottom:10px">Hình thức thanh toán</div>
+            <div class="rv-fi"><div class="rv-fl">Hình thức</div><div class="rv-fv">Thanh toán ngay</div></div>
+          </div>
+          <div style="border:1px solid var(--divider);border-radius:8px;padding:12px">
+            <div style="font-size:14px;font-weight:700;color:var(--c-default);margin-bottom:10px">Thông tin người nhận hóa đơn</div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px">
+              <div class="rv-fi"><div class="rv-fl">Xuất hóa đơn cho</div><div class="rv-fv">Người được bảo hiểm</div></div>
+              <div class="rv-fi"><div class="rv-fl">Email</div><div class="rv-fv">banker@ocb.com.vn</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Fee panel phải -->
+    <div class="fee-panel" style="position:sticky;top:105px">
+      <div class="fp-head">
+        <div style="font-size:16px;font-weight:700;color:var(--c-default);margin-bottom:14px">Phí bảo hiểm</div>
+      </div>
+      <div class="fp-body">
+        <div class="fp-rows">
+          <div class="fp-row" style="padding:10px 0">
+            <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng phí bảo hiểm</div>
+            <div class="fp-rv" id="rv-total-fee" style="font-size:13px;font-weight:700;color:var(--orange);white-space:nowrap">7,500,000 đ</div>
+          </div>
+          <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+          <div style="padding:10px 0">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Thù lao người bán <span style="color:var(--c-secondary);font-size:11px">ⓘ</span></div>
+              <div style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">********** VNĐ</div>
+            </div>
+            <div style="font-size:12px;color:var(--c-secondary);margin-top:3px">Tỷ lệ: **</div>
+          </div>
+          <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+          <div class="fp-row" style="padding:10px 0">
+            <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng TT người bán <span style="color:var(--c-secondary);font-size:11px">ⓘ</span></div>
+            <div class="fp-rv" style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">********** VNĐ</div>
+          </div>
+          <div style="height:1px;background:var(--divider);margin:4px 0"></div>
+          <div class="fp-row" style="padding:10px 0">
+            <div class="fp-rl" style="font-size:13px;color:var(--c-default);font-weight:500;white-space:nowrap">Tổng TT của khách hàng</div>
+            <div class="fp-rv" id="rv-kh-fee" style="font-size:13px;font-weight:700;color:var(--brand);white-space:nowrap">7,500,000 đ</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ MÀN 6 — CUNG CẤP GIẤY TỜ ═══ -->
+<div class="screen" id="s5">
+  <div class="sec">
+    <div class="sec-title">Cung cấp giấy tờ <span class="req">*</span></div>
+    <p style="font-size:13.5px;color:var(--c-secondary);margin:0 0 18px">Tải lên Giấy yêu cầu bảo hiểm (GYC) đã ký. Có thể upload nhiều file.</p>
+
+    <!-- Upload drop zone -->
+    <div id="upload-zone" onclick="document.getElementById('file-input').click()"
+      style="border:2px dashed var(--g300);border-radius:10px;padding:32px 24px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--g100)"
+      ondragover="event.preventDefault();this.style.borderColor='var(--brand)'"
+      ondragleave="this.style.borderColor='var(--g300)'"
+      ondrop="handleDrop(event)">
+      <svg width="36" height="36" fill="none" stroke="var(--g400)" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:10px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <div style="font-size:14px;font-weight:600;color:var(--c-default)">Kéo thả file vào đây hoặc <span style="color:var(--brand);text-decoration:underline">chọn file</span></div>
+      <div style="font-size:12px;color:var(--c-secondary);margin-top:6px">PDF, JPG, PNG — tối đa 10 MB mỗi file</div>
+      <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none" onchange="handleFiles(this.files)">
+    </div>
+
+    <!-- File list -->
+    <div id="file-list" style="margin-top:16px;display:flex;flex-direction:column;gap:8px"></div>
+
+    <!-- Validation message -->
+    <div id="upload-err" style="display:none;margin-top:12px" class="alert a-red">
+      <div class="ai"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div>
+      <div>Vui lòng upload ít nhất 1 file GYC trước khi tiếp tục.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MÀN 7 — THANH TOÁN QR ═══ -->
+<div class="screen" id="s6">
+  <div style="max-width:900px">
+
+    <!-- Chọn phương thức -->
+    <div style="background:white;border-radius:16px;padding:16px;box-shadow:var(--s1);margin-bottom:16px">
+      <div style="font-size:14px;font-weight:700;color:var(--c-default);margin-bottom:14px">Chọn phương thức thanh toán</div>
+      <div style="display:flex;gap:24px;margin-bottom:16px">
+        <div class="rb on" onclick="setPayMethod('qr')" id="pay-rb-qr" style="min-width:120px"><div class="rdot"></div>QR Code OCB</div>
+        <div class="rb" onclick="setPayMethod('card')" id="pay-rb-card" style="min-width:140px"><div class="rdot"></div>Thẻ tín dụng OCB</div>
+      </div>
+
+      <!-- QR Section -->
+      <div id="pay-qr-section">
+        <div style="border:1px solid var(--divider);border-radius:8px;overflow:hidden">
+          <div style="display:flex;gap:32px;align-items:flex-start;padding:20px">
+
+            <!-- QR + logos -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:14px;width:240px;flex-shrink:0">
+              <div style="font-size:16px;font-weight:700;color:var(--c-default)">Quét mã để thanh toán</div>
+              <div style="width:180px;height:180px;border:1px solid var(--divider);border-radius:12px;display:flex;align-items:center;justify-content:center;background:white">
+                <svg width="160" height="160" viewBox="0 0 148 148" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="8" y="8" width="34" height="34" rx="3" fill="none" stroke="var(--brand)" stroke-width="2.5"/>
+                  <rect x="13" y="13" width="24" height="24" rx="2" fill="var(--brand)"/>
+                  <rect x="106" y="8" width="34" height="34" rx="3" fill="none" stroke="var(--brand)" stroke-width="2.5"/>
+                  <rect x="111" y="13" width="24" height="24" rx="2" fill="var(--brand)"/>
+                  <rect x="8" y="106" width="34" height="34" rx="3" fill="none" stroke="var(--brand)" stroke-width="2.5"/>
+                  <rect x="13" y="111" width="24" height="24" rx="2" fill="var(--brand)"/>
+                  <rect x="52" y="8" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="61" y="12" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="70" y="8" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="79" y="12" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="88" y="8" width="5" height="5" rx="1" fill="var(--brand)"/>
+                  <rect x="52" y="20" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="70" y="24" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="88" y="20" width="5" height="5" rx="1" fill="var(--brand)"/>
+                  <rect x="8" y="52" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="20" y="56" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="32" y="52" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="52" y="52" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="64" y="56" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="76" y="52" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="88" y="56" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="100" y="52" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="112" y="56" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="128" y="52" width="5" height="5" rx="1" fill="var(--brand)"/>
+                  <rect x="8" y="66" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="22" y="70" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="36" y="66" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="52" y="70" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="66" y="66" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="80" y="70" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="94" y="66" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="108" y="70" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="120" y="66" width="5" height="5" rx="1" fill="var(--brand)"/>
+                  <rect x="52" y="106" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="64" y="110" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="76" y="106" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="88" y="110" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="100" y="106" width="5" height="5" rx="1" fill="var(--brand)"/>
+                  <rect x="52" y="120" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="68" y="124" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="82" y="120" width="5" height="5" rx="1" fill="var(--brand)"/>
+                  <rect x="126" y="106" width="5" height="5" rx="1" fill="var(--brand)"/><rect x="126" y="120" width="5" height="5" rx="1" fill="var(--brand)"/>
+                  <rect x="57" y="57" width="34" height="34" rx="4" fill="white" stroke="#e5e7eb"/>
+                  <text x="74" y="78" font-size="9" font-weight="800" text-anchor="middle" fill="var(--brand)" font-family="Georgia,serif">PTI</text>
+                </svg>
+              </div>
+              <div style="display:flex;gap:16px;align-items:center">
+                <span style="font-size:12px;font-weight:700;color:#e2231a">VIET<span style="color:#004b9e">GR</span></span>
+                <span style="font-size:11px;font-weight:700;color:#00509e">napas <span style="color:#e2231a">247</span></span>
+              </div>
+              <div style="font-size:12px;color:#004ce5">
+                Mã có hiệu lực đến <strong id="qr-exp">14:30 - 07/05/2026</strong>
+              </div>
+            </div>
+
+            <!-- Divider dọc -->
+            <div style="width:1px;background:var(--divider);align-self:stretch;flex-shrink:0"></div>
+
+            <!-- Chuyển khoản thủ công -->
+            <div style="flex:1;display:flex;flex-direction:column;gap:14px">
+              <div style="font-size:16px;font-weight:700;color:var(--c-default)">Hoặc thực hiện chuyển khoản theo số tài khoản sau:</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;gap:16px;font-size:16px">
+                  <div style="color:var(--c-secondary);width:130px">Số tài khoản:</div>
+                  <div style="font-weight:700;color:var(--c-default)">9968727729</div>
+                </div>
+                <div style="display:flex;gap:16px;font-size:16px">
+                  <div style="color:var(--c-secondary);width:130px">Số tiền:</div>
+                  <div style="font-weight:700;color:var(--c-default)" id="qr-fee-text">7,500,000 đ</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning box vàng -->
+        <div style="background:#fefae6;border-radius:8px;padding:12px 14px;margin-top:12px">
+          <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:4px">
+            <svg width="18" height="18" fill="none" stroke="#92400e" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+            <div style="font-size:14px;font-weight:700;color:var(--c-default)">Quý khách vui lòng kiểm tra thông tin thanh toán trước khi thực hiện giao dịch</div>
+          </div>
+          <div style="font-size:14px;color:var(--c-default);padding-left:26px;line-height:1.5">Giấy chứng nhận bảo hiểm điện tử sẽ được gửi đến số điện thoại và email của Quý khách hàng sau khi PTI ghi nhận thanh toán thành công</div>
+        </div>
+
+        <!-- Status -->
+        <div class="status-bar st-wait" id="qr-status" style="margin-top:12px">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Đang chờ thanh toán...
+        </div>
+
+        <button class="btn btn-ok" style="width:100%;margin-top:12px;justify-content:center;background:#f68632" onclick="simPay()">
+          <svg width="13" height="13" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Xác nhận thanh toán
+        </button>
+      </div>
+
+      <!-- Card Section -->
+      <div id="pay-card-section" style="display:none">
+        <div style="background:#f9fafb;border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;color:var(--c-secondary)">
+          Nhập thông tin thẻ tín dụng OCB của khách hàng để thanh toán.
+        </div>
+        <div class="grid c2" style="margin-bottom:12px">
+          <div class="fg"><label>Số thẻ <span class="req">*</span></label><input placeholder="XXXX XXXX XXXX XXXX"></div>
+          <div class="fg"><label>Tên chủ thẻ <span class="req">*</span></label><input placeholder="Họ và tên in trên thẻ"></div>
+        </div>
+        <div class="grid c2" style="margin-bottom:16px">
+          <div class="fg"><label>Ngày hết hạn <span class="req">*</span></label><input placeholder="MM/YY"></div>
+          <div class="fg"><label>CVV <span class="req">*</span></label><input placeholder="3 chữ số" type="password"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--brand);border-radius:8px;padding:12px 16px;margin-bottom:12px">
+          <div style="color:rgba(255,255,255,.7);font-size:13px">Tổng phí thanh toán</div>
+          <div style="color:white;font-size:18px;font-weight:800;font-family:var(--mono)" id="card-fee-v">7,500,000 đ</div>
+        </div>
+        <button class="btn" style="width:100%;justify-content:center;background:#f68632;color:white;font-weight:700" onclick="simPay()">
+          Xác nhận thanh toán thẻ
+        </button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="success-wrap" style="display:none">
+      <div class="alert a-green" style="margin-bottom:14px">
+        <div class="ai"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <div><strong>Thanh toán thành công</strong> · Hệ thống đã gạch nợ Core · Hóa đơn điện tử đã phát hành</div>
+      </div>
+      <div style="background:white;border-radius:12px;padding:16px;box-shadow:var(--s1)">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-secondary);margin-bottom:10px">GCNBH đã phát hành</div>
+        <div class="gcn-item">
+          <div class="gcn-ico"><svg width="18" height="18" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div style="flex:1">
+            <div class="gcn-title" id="gcn-t1">GCNBH BATD-2026-001234 — Gói Vàng</div>
+            <div class="gcn-sub" id="gcn-s1">07/05/2026 → 07/05/2027 · Mẫu KH có khoản vay</div>
+          </div>
+          <div style="display:flex;gap:7px">
+            <button class="btn btn-s btn-sm">Xem</button>
+            <button class="btn btn-bl btn-sm">Tải về</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- STICKY CTA -->
+<div class="sticky-cta">
+  <button class="btn btn-s" id="btn-back" onclick="go(cur-1)" style="display:none">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Quay lại
+  </button>
+  <div class="cta-left">
+    <span class="cta-step" id="cta-step">Bước 1 / 7</span>
+    <span class="cta-fee" id="cta-fee" style="display:none"></span>
+  </div>
+  <button class="btn btn-p" id="btn-next" onclick="tryNext()">
+    Tiếp tục
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </button>
+</div>
+
+<!-- MODAL: Danh sách bệnh BATD -->
+<div class="mover" id="dis-modal" onclick="if(event.target===this)closeModal('dis-modal')">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">Danh sách bệnh BATD · NVCN025.02.01.11</div><button class="modal-close" onclick="closeModal('dis-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert a-warn" style="margin-bottom:14px">
+        <div class="ai"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+        <div style="font-size:11.5px">Trong <strong>3 năm qua</strong>, nếu NĐBH được chuẩn đoán / điều trị bất kỳ bệnh nào dưới đây → Chỉ <strong>Gói Đồng</strong> được tiếp tục cấp đơn.</div>
+      </div>
+      <ul class="dis-list">
+        <li><div class="dis-dot"></div>Ung thư</li>
+        <li><div class="dis-dot"></div>Đái tháo đường có biến chứng mạn tính</li>
+        <li><div class="dis-dot"></div>Suy thận</li>
+        <li><div class="dis-dot"></div>Suy thận giai đoạn cuối (chạy thận nhân tạo)</li>
+        <li><div class="dis-dot"></div>Suy tủy</li>
+        <li><div class="dis-dot"></div>Đột quỵ</li>
+        <li><div class="dis-dot"></div>Xơ gan</li>
+        <li><div class="dis-dot"></div>Nghẽn mạch phổi (áp dụng với tuổi từ 60 trở lên)</li>
+        <li><div class="dis-dot"></div>Tắc nghẽn phổi mạn tính — COPD (áp dụng với tuổi từ 60 trở lên)</li>
+        <li><div class="dis-dot"></div>Tai biến mạch máu não / Nhồi máu não</li>
+        <li><div class="dis-dot"></div>Suy tim</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Quyền lợi gói -->
+<div class="mover" id="pkg-modal" onclick="if(event.target===this)closeModal('pkg-modal')">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title" id="pkg-modal-title">Quyền lợi bảo hiểm</div><button class="modal-close" onclick="closeModal('pkg-modal')">✕</button></div>
+    <div class="modal-body" id="pkg-modal-body"></div>
+  </div>
+</div>
+
+<script>
+const RATES={dong:.005,bac:.01,titan:.012,vang:.015,bachkim:.0175,lucbao:.02,hongnoc:.025,kimcuong:.03};
+const NAMES={dong:'Đồng',bac:'Bạc',titan:'Titan',vang:'Vàng',bachkim:'Bạch Kim',lucbao:'Lục Bảo',hongnoc:'Hồng Ngọc',kimcuong:'Kim Cương'};
+const STCOEF={1:.1,2:.2,3:.3,4:.4,5:.5,6:.6,7:.7,8:.75,9:.8,10:.9,11:.95,12:1};
+
+let cur=0, ndAge=38, loanType=null, hqAns={1:null,2:null,3:null,4:null}, q4DongOnly=false;
+let stbhV=500000000, thbhV=12, feeV=7500000, curPkg='dong';
+let cTimer;
+const TOTAL_STEPS=7;
+
+/* NAV */
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+
+  // Stage mapping: screen → stage (0=Khảo sát, 1=Chào giá, 2=Hoàn thiện)
+  const stageOf=[0,1,2,2,2,2,2];
+  const curStage=stageOf[n];
+  const checkSVG='<svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+
+  // Update 3 stage nodes
+  for(let s=0;s<3;s++){
+    const sw=document.getElementById('stage'+s);
+    const sd=document.getElementById('sdot'+s);
+    if(!sw)continue;
+    sw.classList.remove('done','active');
+    if(s<curStage){sw.classList.add('done');sd.innerHTML=checkSVG;}
+    else if(s===curStage){sw.classList.add('active');sd.textContent=s+1;}
+    else{sd.textContent=s+1;}
+  }
+  // Stage connector lines
+  const sl0=document.getElementById('sline0');
+  const sl1=document.getElementById('sline1');
+  if(sl0)sl0.classList.toggle('done',curStage>0);
+  if(sl1)sl1.classList.toggle('done',curStage>1);
+
+  // Sub-steps inside stage 2 (screens 2–6 → sub indices 0–4)
+  const subScreens=[2,3,4,5,6];
+  for(let i=0;i<5;i++){
+    const sd=document.getElementById('ss'+i);
+    const lbl=document.getElementById('sslbl'+i);
+    if(!sd)continue;
+    sd.classList.remove('done','active');
+    if(n>subScreens[i]){sd.classList.add('done');}
+    else if(n===subScreens[i]){sd.classList.add('active');}
+    if(lbl){lbl.classList.toggle('active',n===subScreens[i]);}
+  }
+  for(let i=0;i<4;i++){
+    const sl=document.getElementById('ssl'+i);
+    if(sl)sl.classList.toggle('done',n>subScreens[i]);
+  }
+
+  document.getElementById('btn-back').style.display=n===0?'none':'';
+  document.getElementById('cta-step').textContent='Bước '+(n+1)+' / '+TOTAL_STEPS;
+  const fn=document.getElementById('btn-next');
+  const cf=document.getElementById('cta-fee');
+  if(n===TOTAL_STEPS-1){fn.style.display='none';}
+  else{fn.style.display='';fn.innerHTML=(n===4?'Xác nhận':'Tiếp tục')+' <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';}
+  cf.style.display=n>=1?'':'none';
+  cf.textContent=n>=1?fmt(feeV)+' đ':'';
+  if(n===1)renderPkgDropdown();
+  if(n===2){
+    syncSidebar();
+    // Auto fill CCCD và ngày sinh từ bước 1
+    const cccdS1=document.getElementById('nd-cccd');
+    const cccdS3=document.getElementById('nd-cccd-s3');
+    if(cccdS3&&cccdS1)cccdS3.value=cccdS1.value||'';
+    const dobS1=document.getElementById('nd-dob');
+    const dobS3=document.getElementById('nd-dob-s3');
+    if(dobS3&&dobS1)dobS3.value=dobS1.value||'';
+  }
+  if(n===3){const f=document.getElementById('sb-fee2');const f2=document.getElementById('sb-fee2-kh');if(f)f.textContent=fmt(feeV)+' đ';if(f2)f2.textContent=fmt(feeV)+' đ';}
+  if(n===4){
+    syncReview();
+    // Sync CBCS
+    const cbcs=document.getElementById('m1-cbcs');
+    const rvCbcs=document.getElementById('rv-cbcs');
+    if(cbcs&&rvCbcs)rvCbcs.textContent=cbcs.options[cbcs.selectedIndex].text;
+  }
+  if(n===6)startTimer();
+  window.scrollTo(0,0);
+}
+function tryNext(){
+  if(cur===0){
+    const hasReject=Object.entries(hqAns).some(([k,v])=>v==='yes'&&k!='4');
+    if(hasReject)return;
+    const unanswered=Object.entries(hqAns).some(([k,v])=>v===null);
+    if(unanswered){alert('Vui lòng trả lời đủ 4 câu hỏi thẩm định sức khỏe.');return;}
+    const cccd=(document.getElementById('nd-cccd').value||'').trim();
+    if(!cccd){
+      document.getElementById('cccd-r').innerHTML='<span class="fval fv-err">✗ Vui lòng nhập CCCD / Hộ chiếu</span>';
+      document.getElementById('nd-cccd').focus();return;
+    }
+  }
+  if(cur===5){
+    if(uploadedFiles.length===0){
+      document.getElementById('upload-err').style.display='flex';return;
+    }
+    document.getElementById('upload-err').style.display='none';
+  }
+  go(cur+1);
+}
+function goBack(){if(cur>0)go(cur-1);}
+
+/* MÀN 1 */
+function checkAge(){
+  const d=new Date(document.getElementById('nd-dob').value);
+  ndAge=Math.floor((new Date()-d)/(365.25*864e5));
+  const ok=ndAge>=18&&ndAge<=70;
+  document.getElementById('age-r').innerHTML='<span class="fval '+(ok?'fv-ok':'fv-err')+'">'+(ok?'✓ '+ndAge+' tuổi — Đủ điều kiện (18–70)':'✗ '+ndAge+' tuổi — Ngoài phạm vi 18–70, không cấp đơn')+'</span>';
+  checkAgePkg();
+}
+function checkNation(){
+  const v=document.getElementById('nd-nation').value;
+  document.getElementById('nation-warn').style.display=v.includes('ngoài')||v.includes('Ngoài')?'block':'none';
+}
+function checkCCCD(){
+  const v=(document.getElementById('nd-cccd').value||'').trim();
+  const r=document.getElementById('cccd-r');
+  if(!v){r.innerHTML='';return;}
+  const ok=/^[0-9]{9}$|^[0-9]{12}$|^[A-Z][0-9]{7,8}$/.test(v);
+  r.innerHTML='<span class="fval '+(ok?'fv-ok':'fv-err')+'">'+(ok?'✓ Hợp lệ':'✗ Định dạng chưa đúng (9/12 số hoặc hộ chiếu)')+'</span>';
+}
+
+/* ── AGE + DURATION VALIDATION (màn 1) ── */
+function validateAgeDuration(){
+  const dob=document.getElementById('nd-dob').value;
+  const startEl=document.getElementById('fp-start');
+  const endEl=document.getElementById('fp-end-dt');
+  const res=document.getElementById('age-dur-result');
+  if(!dob||!startEl||!startEl.value){res.innerHTML='';return;}
+  const dobD=new Date(dob);
+  const startD=new Date(startEl.value);
+  const ageAtStart=startD.getFullYear()-dobD.getFullYear()-((startD.getMonth()<dobD.getMonth()||(startD.getMonth()===dobD.getMonth()&&startD.getDate()<dobD.getDate()))?1:0);
+  const msgs=[];
+  if(ageAtStart<18||ageAtStart>70){
+    msgs.push('<span class="fval fv-err">✗ Tuổi tham gia '+ageAtStart+' — ngoài giới hạn 18–70 tuổi</span>');
+  } else {
+    msgs.push('<span class="fval fv-ok">✓ Tuổi tham gia: '+ageAtStart+' tuổi (hợp lệ)</span>');
+  }
+  if(endEl&&endEl.value){
+    const ms=new Date(endEl.value)-startD;
+    const months=Math.round(ms/(1000*60*60*24*30.44));
+    if(months<1||months>36){
+      msgs.push('<span class="fval fv-err" style="margin-left:12px">✗ Thời hạn '+months+' tháng — ngoài giới hạn 1–36 tháng</span>');
+    } else {
+      msgs.push('<span class="fval fv-ok" style="margin-left:12px">✓ Thời hạn: '+months+' tháng</span>');
+    }
+    thbhV=Math.max(1,months);
+  }
+  ndAge=ageAtStart;
+  res.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">'+msgs.join('')+'</div>';
+}
+
+/* ── PACKAGE DROPDOWN (màn 2) ── */
+const PKG_DEF=[
+  {id:'dong',   name:'Gói Đồng',      rate:.005,  maxAge:70},
+  {id:'bac',    name:'Gói Bạc',       rate:.01,   maxAge:70},
+  {id:'titan',  name:'Gói Titan',     rate:.012,  maxAge:65},
+  {id:'vang',   name:'Gói Vàng',      rate:.015,  maxAge:65},
+  {id:'bachkim',name:'Gói Bạch Kim',  rate:.0175, maxAge:65},
+  {id:'lucbao', name:'Gói Lục Bảo',   rate:.02,   maxAge:65},
+  {id:'hongnoc',name:'Gói Hồng Ngọc', rate:.025,  maxAge:65},
+  {id:'kimcuong',name:'Gói Kim Cương', rate:.03,  maxAge:65},
+];
+// Filter rules theo THBH (tháng)
+function getAllowedPkgs(){
+  if(!loanType||loanType==='no') return PKG_DEF;
+  const months=thbhV||12;
+  const years=months/12;
+  if(years<3)  return PKG_DEF.filter(p=>['bachkim','lucbao','hongnoc','kimcuong'].includes(p.id));
+  if(years<5)  return PKG_DEF.filter(p=>['titan','vang','bachkim','lucbao','hongnoc','kimcuong'].includes(p.id));
+  return PKG_DEF.filter(p=>p.id!=='dong');
+}
+function renderPkgDropdown(){
+  const sel=document.getElementById('pkg-select');
+  if(!sel)return;
+  const allowed=getAllowedPkgs().filter(p=>!(q4DongOnly&&p.id!=='dong')&&(ndAge<=p.maxAge));
+  const prev=curPkg;
+  sel.innerHTML='<option value="">-- Chọn gói --</option>';
+  allowed.forEach(p=>{
+    const opt=document.createElement('option');
+    opt.value=p.id;
+    opt.textContent=p.name+' — '+(p.rate*100).toFixed(2)+'%/năm';
+    if(p.id===prev)opt.selected=true;
+    sel.appendChild(opt);
+  });
+  // Nếu gói hiện tại không còn hợp lệ → chọn gói đầu tiên
+  if(!prev||!allowed.find(p=>p.id===prev)){
+    if(allowed.length>0){curPkg=allowed[0].id;sel.value=curPkg;}
+    else{curPkg='';sel.value='';}
+  }
+  // Hint filter rule
+  const hint=document.getElementById('pkg-filter-hint');
+  if(hint){
+    if(loanType==='no') hint.textContent='Walk-in: hiển thị đủ 8 gói';
+    else{
+      const y=thbhV/12;
+      hint.textContent=y<3?'THBH < 3 năm: 4 gói (phí tối thiểu 1.75%/năm)':y<5?'THBH 3–<5 năm: 6 gói (phí tối thiểu 3.5%/3 năm)':'THBH ≥ 5 năm: 7 gói (phí tối thiểu 5%/5 năm)';
+    }
+  }
+  // Q4 warn
+  const q4w=document.getElementById('q4-warn-s1');
+  if(q4w)q4w.style.display=q4DongOnly?'flex':'none';
+  // Detail link
+  const dl=document.getElementById('pkg-detail-row');
+  if(dl)dl.style.display=curPkg?'block':'none';
+  // Recalc fee
+  calcPkgFee();
+}
+function selectPkgFromDropdown(id){
+  curPkg=id;
+  const dl=document.getElementById('pkg-detail-row');
+  if(dl)dl.style.display=id?'block':'none';
+  calcPkgFee();
+}
+function calcPkgFee(){
+  const p=PKG_DEF.find(x=>x.id===curPkg);
+  const rawVal=(document.getElementById('fp-stbh')?.value||'').replace(/[^0-9]/g,'');
+  stbhV=parseInt(rawVal)||500000000;
+  const coef=Math.min((thbhV||12)/12,1);
+  feeV=p?Math.round(stbhV*p.rate*coef):0;
+  const totEl=document.getElementById('fpr-total');
+  const khEl=document.getElementById('fpr-kh');
+  const cfEl=document.getElementById('cta-fee');
+  if(totEl)totEl.textContent=p?fmt(feeV)+' đ':'—';
+  if(khEl)khEl.textContent=p?fmt(feeV)+' đ':'—';
+  if(cfEl&&cfEl.style.display!=='none'&&p)cfEl.textContent=fmt(feeV)+' đ';
+}
+function fmtB(n){return n>=1e9?(n/1e9).toFixed(0)+' tỷ':n>=1e6?(n/1e6).toFixed(0)+' triệu':fmt(n);}
+// Backward compat
+function renderPkgCards(){renderPkgDropdown();}
+function selectPkg(id){selectPkgFromDropdown(id);}
+function calcEnd(){
+  const s=document.getElementById('fp-start').value;
+  if(!s)return;
+  const d=new Date(s);
+  d.setFullYear(d.getFullYear()+1);
+  document.getElementById('fp-end-dt').value=d.toISOString().slice(0,10);
+  calcFeeFromDates();
+}
+function calcFeeFromDates(){
+  const s=document.getElementById('fp-start').value;
+  const e=document.getElementById('fp-end-dt').value;
+  if(!s||!e)return;
+  const ms=new Date(e)-new Date(s);
+  thbhV=Math.max(1,Math.round(ms/(1000*60*60*24*30.44)));
+  calc();
+}
+
+/* MÀN 5 — upload */
+let uploadedFiles=[];
+function handleFiles(files){
+  for(const f of files)addFile(f);
+}
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('upload-zone').style.borderColor='var(--g300)';
+  handleFiles(e.dataTransfer.files);
+}
+function addFile(f){
+  if(uploadedFiles.find(u=>u.name===f.name&&u.size===f.size))return;
+  uploadedFiles.push(f);
+  renderFileList();
+}
+function removeFile(i){
+  uploadedFiles.splice(i,1);
+  renderFileList();
+}
+function renderFileList(){
+  const el=document.getElementById('file-list');
+  if(!el)return;
+  const icons={pdf:'📄',jpg:'🖼',jpeg:'🖼',png:'🖼'};
+  el.innerHTML=uploadedFiles.map((f,i)=>{
+    const ext=(f.name.split('.').pop()||'').toLowerCase();
+    const icon=icons[ext]||'📎';
+    const sz=f.size>1024*1024?(f.size/1024/1024).toFixed(1)+' MB':(f.size/1024).toFixed(0)+' KB';
+    return `<div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--g200);border-radius:8px;padding:10px 14px">
+      <span style="font-size:20px">${icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--c-default);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.name}</div>
+        <div style="font-size:11px;color:var(--c-secondary)">${sz}</div>
+      </div>
+      <span style="color:var(--ok);font-size:13px;font-weight:600">✓ Đã tải lên</span>
+      <button onclick="removeFile(${i})" style="background:none;border:none;cursor:pointer;color:var(--c-secondary);font-size:16px;padding:0 4px" title="Xóa">✕</button>
+    </div>`;
+  }).join('');
+  if(uploadedFiles.length>0)document.getElementById('upload-err').style.display='none';
+}
+function ansHQ(q,a){
+  hqAns[q]=a;
+  const hq=document.getElementById('hq'+q);
+  hq.classList.remove('ok','ng','warn');
+  hq.classList.add(a==='no'?'ok':'ng');
+  document.getElementById('hq'+q+'-no').classList.toggle('on',a==='no');
+  document.getElementById('hq'+q+'-yes').classList.toggle('on',a==='yes');
+  const tag=document.getElementById('hq'+q+'-tag');
+  if(tag){
+    if(q<4){tag.className='fval '+(a==='no'?'fv-ok':'fv-err');tag.textContent=a==='no'?'✓ STP':'✗ Không cấp đơn';}
+    else{tag.className='fval '+(a==='no'?'fv-ok':'fv-warn');tag.textContent=a==='no'?'✓ Tất cả 8 gói pass':'⚠ Chỉ Gói Đồng';}
+  }
+  const hasReject=Object.entries(hqAns).some(([k,v])=>v==='yes'&&k!='4');
+  document.getElementById('hq-reject').style.display=hasReject?'flex':'none';
+  q4DongOnly=hqAns[4]==='yes';
+  document.getElementById('q4-dong-warn').style.display=q4DongOnly?'flex':'none';
+  if(q===4&&a==='yes'){
+    // Q4 Có → force Gói Đồng ở màn 2
+    document.getElementById('fp-pkg').value='dong';
+    curPkg='dong';calc();
+  }
+  document.getElementById('btn-next').disabled=hasReject;
+}
+
+/* MÀN 2 */
+function calc(){
+  curPkg=document.getElementById('fp-pkg').value;
+  // Nếu Q4=Có chỉ cho Gói Đồng
+  if(q4DongOnly&&curPkg!=='dong'){
+    document.getElementById('fp-pkg').value='dong';
+    curPkg='dong';
+  }
+  const raw=(document.getElementById('fp-stbh').value||'').replace(/[^0-9]/g,'');
+  stbhV=parseInt(raw)||0;
+  thbhV=parseInt(document.getElementById('fp-thbh').value)||12;
+  if(thbhV<1)thbhV=1;if(thbhV>12)thbhV=12;
+  const rate=RATES[curPkg]||.015;
+  const coef=STCOEF[thbhV]||1;
+  const isShort=thbhV<12;
+  feeV=Math.round(stbhV*rate*coef);
+  // Validate tuổi+gói
+  const isAgeRestricted=ndAge>=66&&(curPkg==='vang'||curPkg==='titan'||curPkg==='bachkim'||curPkg==='lucbao'||curPkg==='hongnoc'||curPkg==='kimcuong');
+  const maxStbh=(ndAge>=66&&(curPkg==='dong'||curPkg==='bac'))?5e8:5e9;
+  const ok=stbhV>0&&stbhV<=maxStbh&&!isAgeRestricted;
+  document.getElementById('fp-stbh-v').innerHTML='<span class="fval '+(stbhV>maxStbh?'fv-err':stbhV>0?'fv-ok':'fv-err')+'">'+(stbhV>maxStbh?'✗ Vượt hạn mức '+fmt(maxStbh)+' VNĐ':stbhV>0?'✓ Hợp lệ':'✗ Nhập STBH')+'</span>';
+  document.getElementById('age-pkg-warn').style.display=isAgeRestricted?'flex':'none';
+  document.getElementById('fp-st-tag').style.display=isShort?'block':'none';
+  const fStr=fmt(feeV)+' đ';
+  document.getElementById('fp-amt').textContent=fStr;
+  document.getElementById('fp-sub').textContent='Gói '+NAMES[curPkg]+' · '+fmt(stbhV/1e6)+'tr · '+thbhV+' tháng';
+  document.getElementById('fpr-total').textContent=fStr;
+  document.getElementById('fpr-kh').textContent=fStr;
+  // Tính ngày kết thúc
+  const start=new Date(document.getElementById('fp-start').value);
+  if(!isNaN(start)){
+    const end=new Date(start);
+    end.setMonth(end.getMonth()+thbhV);
+    document.getElementById('fp-end').value=`08:00 - ${pad(end.getDate())}/${pad(end.getMonth()+1)}/${end.getFullYear()}`;
+  }
+  // sync
+  document.getElementById('qr-fee').textContent=fStr;
+  document.getElementById('cta-fee').textContent=fStr;
+  document.getElementById('rv-fee').textContent=fStr;
+  document.getElementById('rv-pkg').textContent='Gói '+NAMES[curPkg];
+  document.getElementById('rv-rate').textContent=(rate*100)+'%/năm';
+  document.getElementById('rv-stbh').textContent=fmt(stbhV)+' VNĐ';
+  document.getElementById('rv-th').textContent=thbhV+' tháng';
+  document.getElementById('gcn-t1').textContent='GCNBH BATD-2026-001234 — Gói '+NAMES[curPkg];
+}
+function checkAgePkg(){
+  const sel=document.getElementById('fp-pkg');
+  if(ndAge>=66){sel.value='dong';curPkg='dong';calc();}
+}
+function pad(n){return n.toString().padStart(2,'0');}
+function fmt(n){return Math.round(n).toLocaleString('vi-VN');}
+
+/* MÀN 3 */
+function setBMBH(t){
+  ['cn','dn','pdn'].forEach(x=>{document.getElementById('bmbh-'+x).classList.toggle('on',x===t);document.getElementById('bmbh-'+x+'-form').style.display=x===t?'block':'none';});
+}
+function setPaymentMethod(t){
+  ['now','later'].forEach(x=>{const el=document.getElementById('pay-'+x);if(el)el.classList.toggle('on',x===t);});
+}
+function setInvoice(t){
+  ['none','buyer','insured'].forEach(x=>{const el=document.getElementById('inv-'+x);if(el)el.classList.toggle('on',x===t);});
+  const fields=document.getElementById('inv-fields');
+  const label=document.getElementById('inv-name-label');
+  if(fields)fields.style.display=(t==='none')?'none':'block';
+  if(label){
+    label.textContent=t==='buyer'?'Bên mua bảo hiểm':'Người được bảo hiểm';
+  }
+}
+/* setHDTD removed — controlled by Màn 1 setLoanType */
+function setNTH1(t){
+  ['cn','dn','pdn'].forEach(x=>{const el=document.getElementById('nth1-'+x);if(el)el.classList.toggle('on',x===t);});
+  document.getElementById('nth1-cn-form').style.display=t==='cn'?'grid':'none';
+  document.getElementById('nth1-dn-form').style.display=t!=='cn'?'grid':'none';
+}
+function setNTH2wk(t){
+  ['cn','dn','pdn'].forEach(x=>{const el=document.getElementById('nth2wk-'+x);if(el)el.classList.toggle('on',x===t);});
+  document.getElementById('nth2wk-cn-form').style.display=t==='cn'?'grid':'none';
+  document.getElementById('nth2wk-dn-form').style.display=t!=='cn'?'grid':'none';
+}
+function setNTH2(t){
+  ['cn','dn','pdn'].forEach(x=>{
+    const el=document.getElementById('nth2-'+x);
+    if(el)el.classList.toggle('on',x===t);
+  });
+  document.getElementById('nth2-cn-form').style.display=t==='cn'?'grid':'none';
+  document.getElementById('nth2-dn-form').style.display=t!=='cn'?'grid':'none';
+}
+function addNTH2(){
+  document.getElementById('nth2-wrap').style.display='block';
+  document.getElementById('btn-add-nth2').style.display='none';
+  // NTH2 type wrap only for HĐ TD
+  const tw=document.getElementById('nth2-type-wrap');
+  const cnForm=document.getElementById('nth2-cn-form');
+  const walkinForm=document.getElementById('nth2-walkin-form');
+  if(loanType==='yes'){
+    if(tw)tw.style.display='block';
+    if(cnForm)cnForm.style.display='grid';
+    if(walkinForm)walkinForm.style.display='none';
+  } else {
+    if(tw)tw.style.display='none';
+    if(cnForm)cnForm.style.display='none';
+    if(walkinForm)walkinForm.style.display='block';
+  }
+}
+
+/* Hình thức tham gia từ màn 1 */
+function setLoanType(t){
+  loanType=t;
+  ['yes','no'].forEach(x=>document.getElementById('loan-'+x).classList.toggle('on',x===t));
+  // Sync màn 3 theo hình thức tham gia
+  const syncNote=document.getElementById('hdtd-sync-note');
+  if(syncNote)syncNote.innerHTML='Hình thức tham gia: <strong>'+(t==='yes'?'Có khoản vay':'Không có khoản vay (walk-in)')+'</strong> — đã xác định ở Bước 1';
+  const hdForm=document.getElementById('hdtd-form');
+  const hdNote=document.getElementById('hdtd-no-note');
+  if(hdForm)hdForm.style.display=t==='yes'?'block':'none';
+  if(hdNote)hdNote.style.display=t==='no'?'flex':'none';
+  const nth1ocb=document.getElementById('nth1-ocb');
+  const nth1wk=document.getElementById('nth1-walkin');
+  if(nth1ocb)nth1ocb.style.display=t==='yes'?'block':'none';
+  if(nth1wk)nth1wk.style.display=t==='no'?'block':'none';
+  // Reset NTH2 khi đổi loại hình
+  const nth2wrap=document.getElementById('nth2-wrap');
+  const btnAddNth2=document.getElementById('btn-add-nth2');
+  if(nth2wrap)nth2wrap.style.display='none';
+  if(btnAddNth2)btnAddNth2.style.display='';
+  updatePkgFilter();
+  calc();
+}
+
+/* Filter gói theo thời hạn vay */
+const PKG_ALL=['dong','bac','titan','vang','bachkim','lucbao','hongnoc','kimcuong'];
+const PKG_LABELS={dong:'Gói Đồng — 0.5%/năm',bac:'Gói Bạc — 1.0%/năm',titan:'Gói Titan — 1.2%/năm',vang:'Gói Vàng — 1.5%/năm',bachkim:'Gói Bạch Kim — 1.75%/năm',lucbao:'Gói Lục Bảo — 2.0%/năm',hongnoc:'Gói Hồng Ngọc — 2.5%/năm',kimcuong:'Gói Kim Cương — 3.0%/năm'};
+const PKG_LT3=['bachkim','lucbao','hongnoc','kimcuong'];
+const PKG_3TO5=['titan','vang','bachkim','lucbao','hongnoc','kimcuong'];
+const PKG_GE5=['bac','titan','vang','bachkim','lucbao','hongnoc','kimcuong'];
+
+function updatePkgFilter(){
+  const sel=document.getElementById('fp-pkg');
+  if(!sel)return;
+  // Dùng THBH (tháng) từ Màn 2 để filter
+  const months=parseInt(document.getElementById('fp-thbh')?.value)||12;
+  const years=months/12;
+  const hint=document.getElementById('pkg-filter-hint');
+  const ruleNote=document.getElementById('pkg-rule-note');
+  let allowed, hintTxt, ruleTxt;
+  if(loanType==='no'){
+    allowed=PKG_ALL;
+    hintTxt='Walk-in: hiển thị đủ 8 gói';
+    ruleTxt='';
+  } else if(years<3){
+    allowed=PKG_LT3;
+    hintTxt='THBH < 3 năm: hiển thị 4 gói (phí tối thiểu 1.75%/năm)';
+    ruleTxt='Tỷ lệ phí tối thiểu: 1.75%/năm — 4 gói áp dụng';
+  } else if(years<5){
+    allowed=PKG_3TO5;
+    hintTxt='THBH 3–<5 năm: hiển thị 6 gói (phí tối thiểu 3.5%/3 năm)';
+    ruleTxt='Tỷ lệ phí tối thiểu: 3.5%/3 năm — 6 gói áp dụng';
+  } else {
+    allowed=PKG_GE5;
+    hintTxt='THBH ≥ 5 năm: hiển thị 7 gói (phí tối thiểu 5%/5 năm)';
+    ruleTxt='Tỷ lệ phí tối thiểu: 5%/5 năm — 7 gói áp dụng';
+  }
+  if(hint)hint.textContent=hintTxt;
+  if(ruleNote)ruleNote.textContent=ruleTxt;
+  const cur=sel.value;
+  sel.innerHTML='';
+  allowed.forEach(pk=>{
+    const opt=document.createElement('option');
+    opt.value=pk;opt.textContent=PKG_LABELS[pk];
+    if(pk===cur||(!allowed.includes(cur)&&pk===allowed[0]))opt.selected=true;
+    sel.appendChild(opt);
+  });
+  if(!allowed.includes(curPkg))curPkg=allowed[0];
+  calc();
+}
+function fmtHdtdAmount(inp){
+  const raw=(inp.value||'').replace(/[^0-9]/g,'');
+  if(raw)inp.value=parseInt(raw).toLocaleString('vi-VN');
+  else inp.value='';
+}
+function handleRel(){
+  const rel=document.getElementById('nd-rel').value;
+  const isBanthan=rel==='banthan';
+  document.getElementById('nd-banthan-note').style.display=isBanthan?'flex':'none';
+  document.getElementById('nd-other-note').style.display=isBanthan?'none':'flex';
+  const nameEl=document.getElementById('nd-name');
+  const phoneEl=document.getElementById('nd-phone');
+  const emailEl=document.getElementById('nd-email');
+  const addrEl=document.getElementById('nd-addr');
+  if(isBanthan){
+    const bName=document.getElementById('bmbh-name');
+    const bPhone=document.getElementById('bmbh-phone');
+    const bEmail=document.getElementById('bmbh-email');
+    const bAddr=document.getElementById('bmbh-addr');
+    if(nameEl)nameEl.value=bName?bName.value:'';
+    if(phoneEl)phoneEl.value=bPhone?bPhone.value:'';
+    if(emailEl)emailEl.value=bEmail?bEmail.value:'';
+    if(addrEl)addrEl.value=bAddr?bAddr.value:'';
+  } else {
+    if(nameEl)nameEl.value='';
+    if(phoneEl)phoneEl.value='';
+    if(emailEl)emailEl.value='';
+    if(addrEl)addrEl.value='';
+  }
+  [nameEl,phoneEl,emailEl,addrEl].forEach(el=>{
+    if(el){el.readOnly=isBanthan;el.classList.toggle('ro',isBanthan);}
+  });
+}
+function syncSidebar(){
+  const feeEl=document.getElementById('sb-fee');
+  const feeKhEl=document.getElementById('sb-fee-kh');
+  if(feeEl)feeEl.textContent=fmt(feeV)+' đ';
+  if(feeKhEl)feeKhEl.textContent=fmt(feeV)+' đ';
+}
+
+/* MÀN 4 */
+function syncReview(){
+  // Màn 4 PTI style
+  const pkgNames={dong:'Gói Đồng',bac:'Gói Bạc',titan:'Gói Titan',vang:'Gói Vàng',bachkim:'Gói Bạch Kim',lucbao:'Gói Lục Bảo',hongnoc:'Gói Hồng Ngọc',kimcuong:'Gói Kim Cương'};
+  const el=id=>document.getElementById(id);
+  if(el('rv-pkg-v'))el('rv-pkg-v').textContent=pkgNames[curPkg]||'Gói Vàng';
+  if(el('rv-stbh-v'))el('rv-stbh-v').textContent=fmt(stbhV)+' đ';
+  if(el('rv-end-v'))el('rv-end-v').textContent=el('fp-end')?el('fp-end').value:'—';
+  if(el('rv-total-fee'))el('rv-total-fee').textContent=fmt(feeV)+' đ';
+  if(el('rv-kh-fee'))el('rv-kh-fee').textContent=fmt(feeV)+' đ';
+  if(el('rv-loan-block'))el('rv-loan-block').style.display=loanType==='yes'?'block':'none';
+  if(el('qr-fee-text'))el('qr-fee-text').textContent=fmt(feeV)+' đ';
+  if(el('card-fee-v'))el('card-fee-v').textContent=fmt(feeV)+' đ';
+}
+function simulateUpload(){
+  uploadDone=true;
+  const box=document.getElementById('upload-box');
+  box.classList.add('has-file');
+  document.getElementById('upload-icon').innerHTML='<svg width="18" height="18" fill="none" stroke="#057a55" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+  document.getElementById('upload-title').textContent='GYCBH_BATD_2026.pdf';
+  document.getElementById('upload-sub').textContent='Upload thành công · 1.2 MB';
+  document.getElementById('upload-fname').style.display='block';
+}
+
+/* MÀN 5 */
+function startTimer(){
+  const end=new Date();end.setMinutes(end.getMinutes()+5);
+  document.getElementById('qr-exp').textContent=`${pad(end.getHours())}:${pad(end.getMinutes())} - ${pad(end.getDate())}/${pad(end.getMonth()+1)}/${end.getFullYear()}`;
+}
+function setPayMethod(t){
+  document.getElementById('pay-qr-section').style.display=t==='qr'?'block':'none';
+  document.getElementById('pay-card-section').style.display=t==='card'?'block':'none';
+  document.querySelectorAll('.rg .rb').forEach((rb,i)=>rb.classList.toggle('on',i===(t==='qr'?0:1)));
+  // sync card fee
+  const cf=document.getElementById('card-fee');
+  if(cf)cf.textContent=fmt(feeV)+' đ';
+}
+function simPay(){
+  document.getElementById('qr-status').className='status-bar st-ok';
+  document.getElementById('qr-status').innerHTML='<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Thanh toán thành công · Hệ thống đã ghi nhận';
+  document.getElementById('success-wrap').style.display='block';
+  document.getElementById('gcn-s1').textContent='07/05/2026 → 07/05/2027 · '+fmt(stbhV)+' VNĐ · Mẫu '+(loanType==='yes'?'KH có khoản vay':'KH khác');
+}
+
+/* COLLAPSIBLE */
+function toggleColl(id){
+  const el=document.getElementById('coll-'+id);
+  el.classList.toggle('open');
+}
+
+/* MODAL */
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+const PDATA={
+  dong:{t:'Gói Đồng · 0.5%/năm',s:[
+    {t:'Quyền lợi tai nạn',r:[['Tử vong do tai nạn','100% STBH'],['TTVV do tai nạn','100% STBH'],['Mai táng phí tai nạn','10% STBH, tối đa 100tr'],['Tử vong do hải tặc / không tặc','100% STBH'],['Tử vong nồng độ cồn thấp','100% STBH']]},
+    {t:'Phạm vi địa lý',r:[['Việt Nam','Cơ bản'],['Đông Nam Á','STBH ≥ 1 tỷ']]}
+  ]},
+  bac:{t:'Gói Bạc · 1.0%/năm',s:[
+    {t:'Quyền lợi tai nạn',r:[['Tử vong do tai nạn','100% STBH'],['TTVV do tai nạn','100% STBH'],['Nồng độ cồn thấp','100% STBH']]},
+    {t:'Quyền lợi ốm bệnh & thai sản',r:[['Tử vong ốm bệnh / thai sản','100% STBH, tối đa 1 tỷ'],['TTVV ốm bệnh / thai sản','100% STBH, tối đa 1 tỷ'],['Đột tử / Không rõ nguyên nhân','100% STBH, tối đa 1 tỷ'],['Mai táng phí ốm / thai sản','10% STBH, tối đa 100tr']]},
+    {t:'Phạm vi địa lý',r:[['Việt Nam','Cơ bản'],['Châu Á','STBH ≥ 1 tỷ']]}
+  ]},
+  titan:{t:'Gói Titan · 1.2%/năm',s:[
+    {t:'Tất cả quyền lợi Gói Bạc +',r:[['Tử vong ốm bệnh / thai sản','100% STBH, tối đa 1 tỷ'],['Nội trú tai nạn / ốm / thai sản','500K/ngày, tối đa 50 ngày (STBH ≥ 500tr)'],['CPYT tai nạn','Tối đa 20 triệu (STBH ≥ 500tr)'],['Huấn luyện QP / Đình công','100% STBH (STBH ≥ 1 tỷ)']]},
+    {t:'Phạm vi địa lý',r:[['Châu Á','STBH ≥ 1 tỷ']]}
+  ]},
+  vang:{t:'Gói Vàng · 1.5%/năm',s:[
+    {t:'Tất cả Titan + nâng giới hạn',r:[['Tử vong ốm bệnh / thai sản','100% STBH, tối đa 1.5 tỷ'],['TTVV ốm bệnh / thai sản','100% STBH, tối đa 1.5 tỷ'],['Sát hại, tấn công vô cớ','50% STBH (STBH ≥ 1 tỷ)']]},
+    {t:'Phạm vi địa lý',r:[['Châu Á','STBH ≥ 1 tỷ']]}
+  ]},
+  bachkim:{t:'Gói Bạch Kim · 1.75%/năm',s:[
+    {t:'Tất cả Vàng + nâng giới hạn',r:[['Tử vong ốm bệnh / thai sản','100% STBH, tối đa 2 tỷ'],['TTVV ốm bệnh / thai sản','100% STBH, tối đa 2 tỷ']]},
+    {t:'Phạm vi địa lý',r:[['Châu Á','STBH ≥ 1 tỷ']]}
+  ]},
+  lucbao:{t:'Gói Lục Bảo · 2.0%/năm',s:[
+    {t:'Tất cả Bạch Kim +',r:[['Phạm vi Toàn cầu','STBH ≥ 1 tỷ'],['Sát hại, tấn công vô cớ','100% STBH (STBH ≥ 1 tỷ)']]},
+    {t:'Phạm vi địa lý',r:[['Toàn cầu','STBH ≥ 1 tỷ'],['Châu Á','STBH < 1 tỷ']]}
+  ]},
+  hongnoc:{t:'Gói Hồng Ngọc · 2.5%/năm',s:[
+    {t:'Tất cả Lục Bảo + bổ sung',r:[['Khủng bố','100% STBH'],['Bắt cóc và Tống tiền','100% STBH'],['Vận chuyển y tế khẩn cấp','Tối đa 5tr/vụ, tối đa 2 tỷ/năm']]},
+    {t:'Phạm vi địa lý',r:[['Toàn cầu','STBH ≥ 1 tỷ']]}
+  ]},
+  kimcuong:{t:'Gói Kim Cương · 3.0%/năm',s:[
+    {t:'Full QLBH · Bao gồm tất cả',r:[['Tất cả quyền lợi Hồng Ngọc','Full'],['Tử vong / TTVV tai nạn','100% STBH'],['Tử vong / TTVV ốm bệnh','100% STBH, tối đa 2 tỷ'],['Tất cả điều khoản mở rộng','100% STBH']]},
+    {t:'Phạm vi địa lý',r:[['Toàn cầu','Mọi STBH']]}
+  ]}
+};
+function openPkgModal(pkg){
+  const d=PDATA[pkg];if(!d)return;
+  document.getElementById('pkg-modal-title').textContent=d.t;
+  let h='';d.s.forEach(s=>{h+='<div class="ql-st">'+s.t+'</div>';s.r.forEach(r=>{h+='<div class="ql-row"><div class="ql-n">'+r[0]+'</div><div class="ql-v">'+r[1]+'</div></div>';});});
+  document.getElementById('pkg-modal-body').innerHTML=h;
+  openModal('pkg-modal');
+}
+
+// Init
+updatePkgFilter();
+calc();
+document.getElementById('btn-back').style.display='none';
+document.getElementById('btn-next').disabled=false;
+document.getElementById('btn-next').style.display='';
+</script>
+</body>
+</html>
