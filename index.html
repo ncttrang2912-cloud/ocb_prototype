@@ -37,6 +37,7 @@
   --g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;
   --g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--g900:#111827;
   --sw:220px;
+  --sw-collapsed:0px;
   --font:'Mulish',sans-serif;
   --mono:'JetBrains Mono',monospace;
   --s1:0 2px 8px rgba(38,38,40,0.05);--s2:0 4px 16px rgba(38,38,40,0.10);
@@ -128,16 +129,16 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 /* HQ — câu hỏi sức khỏe dạng radio */
 .hq{padding:14px 16px;border:1.5px solid var(--g200);border-radius:10px;margin-bottom:10px;transition:.18s;background:white}
-.hq.ok{border-color:#00b96b;background:#f0fdf4}
-.hq.ng{border-color:var(--red);background:var(--red-p)}
-.hq.warn{border-color:var(--amber-b);background:var(--amber-p)}
+.hq.ok{border-color:var(--g200);background:white}
+.hq.ng{border-color:var(--g200);background:white}
+.hq.warn{border-color:var(--g200);background:white}
 .hq-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .hq-q{font-size:12.5px;line-height:1.65;color:var(--g700);flex:1}
 .hq-q strong{display:block;font-size:11px;color:var(--g500);font-weight:500;margin-bottom:2px}
 .hq-btns{display:flex;gap:8px;margin-top:10px}
 .hqb{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--g300);background:white;font-family:var(--font);font-size:12.5px;font-weight:600;color:var(--g600);cursor:pointer;transition:.15s}
-.hqb.no.on{border-color:var(--green);background:var(--green-p);color:var(--green)}
-.hqb.yes.on{border-color:var(--red);background:var(--red-p);color:var(--red)}
+.hqb.no.on{border-color:var(--brand);background:var(--brand-p);color:var(--brand)}
+.hqb.yes.on{border-color:var(--brand);background:var(--brand-p);color:var(--brand)}
 
 /* ALERT */
 .alert{display:flex;gap:9px;padding:11px 14px;border-radius:8px;font-size:12.5px;line-height:1.6;margin-bottom:12px}
@@ -447,7 +448,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 
 /* ═══ TRANG CHỦ ═══ */
-#screen-home {display:none;position:fixed;top:0;left:220px;right:0;bottom:0;background:#f5f5f5;overflow-y:auto;z-index:25;}
+#screen-home {display:none;position:fixed;top:0;left:var(--sw);right:0;bottom:0;background:#f5f5f5;overflow-y:auto;z-index:25;transition:left .28s cubic-bezier(.4,0,.2,1);}
 .home-section-card {background:white;border-radius:12px;box-shadow:0 2px 8px rgba(38,38,40,.05);padding:20px 24px;margin-bottom:18px;}
 .home-section-title {font-size:13px;font-weight:700;color:#6b7280;letter-spacing:.04em;text-transform:uppercase;margin-bottom:16px;}
 .home-product-grid {display:flex;gap:16px;flex-wrap:wrap;}
@@ -472,8 +473,72 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .pill-hoanthanh {background:#ecfdf5;color:#057a55;border:1px solid #a7f3d0;}
 .pill-hethanthanhtoan {background:#fdf2f2;color:#b91c1c;border:1px solid #fca5a5;}
 
+/* ═══ SIDEBAR TOGGLE ═══ */
+.sb-toggle-btn{position:absolute;top:14px;right:-14px;width:28px;height:28px;border-radius:50%;background:white;border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:40;box-shadow:0 2px 6px rgba(0,0,0,.12);transition:background .15s,transform .25s}
+.sb-toggle-btn:hover{background:var(--brand-p)}
+.sb-toggle-btn svg{transition:transform .3s}
+body.sb-closed .sb{transform:translateX(-100%)}
+body.sb-closed .sb-toggle-btn{right:-40px;transform:none}
+body.sb-closed .sb-toggle-btn svg{transform:rotate(180deg)}
+body.sb-closed .main{margin-left:0}
+body.sb-closed .sticky-cta{left:0}
+body.sb-closed #screen-home{left:0}
+body.sb-closed #screen-quanly{left:0}
+body.sb-closed #screen-baocao{left:0}
+.sb{transition:transform .28s cubic-bezier(.4,0,.2,1)}
+.main{transition:margin-left .28s cubic-bezier(.4,0,.2,1)}
+.sticky-cta{transition:left .28s cubic-bezier(.4,0,.2,1)}
+#screen-home,#screen-quanly{transition:left .28s cubic-bezier(.4,0,.2,1)}
+
+/* ═══ MOBILE OVERLAY SIDEBAR ═══ */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:29;backdrop-filter:blur(1px)}
+
+/* ═══ MOBILE BOTTOM FEE PANEL ═══ */
+.mobile-fee-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:25;background:white;border-top:2px solid var(--brand);padding:0}
+.mobile-fee-bar-collapsed{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;cursor:pointer}
+.mobile-fee-bar-expanded{display:none;border-top:1px solid var(--g100);padding:14px 16px;max-height:60vh;overflow-y:auto}
+.mobile-fee-bar.open .mobile-fee-bar-expanded{display:block}
+.mobile-fee-bar.open .mobile-fee-bar-collapsed{border-bottom:1px solid var(--g100)}
+.mfb-label{font-size:12px;font-weight:600;color:var(--g500)}
+.mfb-amount{font-size:16px;font-weight:800;color:var(--orange);font-family:var(--mono)}
+.mfb-chev{transition:transform .25s;color:var(--g400)}
+.mobile-fee-bar.open .mfb-chev{transform:rotate(180deg)}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width:768px){
+  :root{--sw:0px}
+  body{display:block}
+  .sb{transform:translateX(-100%);width:240px;z-index:50}
+  .sb.mobile-open{transform:translateX(0)}
+  .sb-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .25s}
+  .sb-overlay.active{opacity:1;pointer-events:all}
+  .sb-toggle-btn{right:auto;left:12px;top:12px;position:fixed;z-index:51;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  body.sb-closed .sb-toggle-btn{right:auto;left:12px;transform:none}
+  .main{margin-left:0!important}
+  .topbar{padding:0 16px 0 52px}
+  .content{padding:16px 14px 160px}
+  .stepper{padding:0 14px}
+  .sticky-cta{left:0!important;flex-direction:column;gap:8px;padding:10px 14px}
+  .sticky-cta .cta-left{width:100%;justify-content:space-between}
+  .sticky-cta .cta-btns{width:100%;display:flex;gap:8px}
+  .sticky-cta .cta-btns .btn{flex:1;justify-content:center}
+  .grid.c2,.grid.c3,.grid.c4{grid-template-columns:1fr}
+  .m2-wrap,.m3-wrap{grid-template-columns:1fr!important}
+  .m2-wrap > div:last-child,.m3-wrap > div:last-child{display:none}
+  .mobile-fee-bar{display:block}
+  .review-grid{grid-template-columns:1fr}
+  #screen-home{left:0!important}
+  #screen-quanly{left:0!important}
+  .ql-filter-bar{flex-direction:column}
+  .ql-fg{min-width:unset;width:100%}
+  .stage-bar{gap:0;padding:12px 0 0}
+  .stage-dot{width:28px;height:28px;font-size:11px}
+  .stage-lbl{font-size:10.5px}
+  .fee-bar{flex-direction:column;gap:6px;align-items:flex-start}
+}
+
 /* ═══ QUẢN LÝ ĐƠN ═══ */
-#screen-quanly {display:none;position:fixed;top:0;left:220px;right:0;bottom:0;background:#f5f5f5;overflow-y:auto;z-index:25;}
+#screen-quanly {display:none;position:fixed;top:0;left:var(--sw);right:0;bottom:0;background:#f5f5f5;overflow-y:auto;z-index:25;transition:left .28s cubic-bezier(.4,0,.2,1);}
 .ql-filter-bar {background:white;border-radius:12px;padding:18px 20px;margin-bottom:18px;box-shadow:0 2px 8px rgba(38,38,40,.05);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;}
 .ql-fg {display:flex;flex-direction:column;gap:5px;flex:1;min-width:160px;}
 .ql-fg label {font-size:12px;font-weight:700;color:#374151;}
@@ -510,8 +575,6 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <div class="rd-spinner" id="rd-spin"></div>
       <svg class="rd-check" id="rd-check" width="30" height="30" fill="none" stroke="#057a55" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div class="rd-headline">Đang điều hướng tới <span style="color:#03377b">iPTI</span></div>
-    <div class="rd-sub">Để đảm bảo bảo mật an toàn thông tin,<br>hệ thống đang chuyển hướng bạn tới<br><strong style="color:#03377b;font-family:'JetBrains Mono',monospace;font-size:13px">ocb.ipti.com.vn</strong></div>
     <div class="rd-progress-wrap"><div class="rd-progress-bar" id="rd-pbar"></div></div>
   </div>
 </div>
@@ -609,8 +672,14 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </div>
 
 
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sb-overlay" id="sb-overlay" onclick="closeMobileSidebar()"></div>
+
 <!-- SIDEBAR -->
-<div class="sb">
+<div class="sb" id="sidebar">
+  <button class="sb-toggle-btn" onclick="toggleSidebar()" title="Thu gọn / Mở rộng menu" aria-label="Toggle sidebar">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
   <div class="sb-logo">
     <svg width="52" height="28" viewBox="0 0 52 28" xmlns="http://www.w3.org/2000/svg">
       <!-- i -->
@@ -638,16 +707,15 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       <div class="sb-item active" id="sb-batd" onclick="showBATD()">Bảo An Tín Dụng</div>
     </div>
   </nav>
-  <div class="sb-user">
-    <div class="sb-av">NL</div>
-    <div><div class="sb-uname">Nguyễn Thị Lan</div><div class="sb-urole">OCB Khối RB</div></div>
-  </div>
 </div>
 
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div class="bc">
+      <button id="mobile-menu-btn" onclick="openMobileSidebar()" style="display:none;background:none;border:none;cursor:pointer;padding:4px;margin-right:8px;color:var(--g600)">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <span>Trang chủ</span>
       <span class="bc-sep">/</span>
       <span>Cấp đơn</span>
@@ -759,26 +827,15 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
           <option value="PTH">Phạm Thị H</option>
         </select>
       </div>
+      <div class="fg">
+        <label>Điểm bán</label>
+        <input type="text" value="OCB Hà Nội" class="ro" readonly>
+        <span class="hint">Điểm bán được xác định tự động theo tài khoản</span>
+      </div>
     </div>
   </div>
 
-  <!-- BLOCK 2: Thời hạn bảo hiểm -->
-  <div class="sec">
-    <div class="sec-title">Thời hạn bảo hiểm</div>
-    <div class="grid c2">
-      <div class="fg">
-        <label>Ngày bắt đầu hiệu lực <span class="req">*</span></label>
-        <input type="date" id="fp-start" value="2026-05-15" onchange="calcEnd();validateAgeDuration()">
-      </div>
-      <div class="fg">
-        <label>Ngày kết thúc hiệu lực <span class="req">*</span></label>
-        <input type="date" id="fp-end-dt" value="2027-05-15" onchange="calcFeeFromDates();validateAgeDuration()">
-      </div>
-    </div>
-    <div id="age-dur-result" style="margin-top:10px"></div>
-  </div>
-
-  <!-- BLOCK 3: Thông tin người được bảo hiểm -->
+  <!-- BLOCK 2: Thông tin người được bảo hiểm -->
   <div class="sec">
     <div class="sec-title">Thông tin người được bảo hiểm</div>
 
@@ -889,6 +946,29 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
       </div>
     </div><!-- end thẩm định -->
   </div>
+
+  <!-- BLOCK: Chương trình bảo hiểm (moved from top, was "Thời hạn bảo hiểm") -->
+  <div class="sec">
+    <div class="sec-title">Chương trình bảo hiểm</div>
+    <div class="grid c2">
+      <div class="fg">
+        <label>Ngày bắt đầu hiệu lực <span class="req">*</span></label>
+        <input type="date" id="fp-start" value="2026-05-15" onchange="calcEnd();validateAgeDuration()">
+      </div>
+      <div class="fg">
+        <label>Ngày kết thúc hiệu lực <span class="req">*</span></label>
+        <input type="date" id="fp-end-dt" value="2027-05-15" onchange="calcFeeFromDates();validateAgeDuration()">
+      </div>
+    </div>
+    <div class="grid c2" style="margin-bottom:0">
+      <div class="fg">
+        <label>Số tiền bảo hiểm (STBH) <span class="req">*</span></label>
+        <input id="fp-stbh" value="500,000,000" oninput="calcPkgFee()" placeholder="VNĐ">
+        <span class="hint">Nhập số tiền bảo hiểm theo hợp đồng tín dụng (VNĐ)</span>
+      </div>
+    </div>
+    <div id="age-dur-result" style="margin-top:10px"></div>
+  </div>
 </div>
 
 <!-- ═══ MÀN 2 — CHÀO GIÁ ═══ -->
@@ -897,16 +977,6 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
     <!-- COL LEFT: Form -->
     <div>
-      <div class="sec">
-        <div class="sec-title">Số tiền bảo hiểm</div>
-        <div class="grid c2" style="margin-bottom:0">
-          <div class="fg">
-            <label>Số tiền bảo hiểm (STBH) <span class="req">*</span></label>
-            <input id="fp-stbh" value="500,000,000" oninput="calcPkgFee()" placeholder="VNĐ">
-          </div>
-        </div>
-      </div>
-
       <div class="sec">
         <div class="sec-title">Chọn gói bảo hiểm <span class="req">*</span></div>
         <div class="grid c2" style="margin-bottom:10px">
@@ -1863,7 +1933,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 </div>
 
 <!-- BÁO CÁO PANEL -->
-<div id="screen-baocao" style="display:none;position:fixed;top:0;left:220px;right:0;bottom:0;background:#f5f5f5;overflow-y:auto;z-index:25">
+<div id="screen-baocao" style="display:none;position:fixed;top:0;left:var(--sw);right:0;bottom:0;background:#f5f5f5;overflow-y:auto;z-index:25;transition:left .28s cubic-bezier(.4,0,.2,1)">
   <!-- Topbar -->
   <div style="background:white;border-bottom:1px solid rgba(7,7,7,.08);padding:0 28px;height:52px;display:flex;align-items:center;position:sticky;top:0;z-index:20">
     <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#999;font-weight:500">
@@ -1958,10 +2028,42 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
     <span class="cta-step" id="cta-step">Bước 1 / 7</span>
     <span class="cta-fee" id="cta-fee" style="display:none"></span>
   </div>
-  <button class="btn btn-p" id="btn-next" onclick="tryNext()">
-    Tiếp tục
-    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-  </button>
+  <div class="cta-btns">
+    <button class="btn btn-p" id="btn-next" onclick="tryNext()">
+      Tiếp tục
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- MOBILE FEE BAR (hiện trên mobile thay cho fee-panel sticky) -->
+<div class="mobile-fee-bar" id="mobile-fee-bar">
+  <div class="mobile-fee-bar-collapsed" onclick="toggleMobileFeeBar()">
+    <div>
+      <div class="mfb-label">Phí bảo hiểm</div>
+      <div class="mfb-amount" id="mfb-total">—</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:12px;color:var(--brand);font-weight:600">Chi tiết</span>
+      <svg class="mfb-chev" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+  </div>
+  <div class="mobile-fee-bar-expanded">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--g100)">
+        <span style="color:var(--g500)">Tổng phí bảo hiểm</span>
+        <span id="mfb-phi" style="font-weight:700;color:var(--orange)">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--g100)">
+        <span style="color:var(--g500)">Thù lao người bán</span>
+        <span style="font-weight:600;color:var(--brand)">**********</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0">
+        <span style="color:var(--g500)">Khách hàng thanh toán</span>
+        <span id="mfb-kh" style="font-weight:700;color:var(--brand)">—</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL: PDF Brochure -->
@@ -3133,6 +3235,98 @@ function showQuanLy() {
   var sbql = document.getElementById('sb-quanly');
   if(sbql) sbql.classList.add('active');
 }
+
+/* ═══ SIDEBAR TOGGLE ═══ */
+function toggleSidebar() {
+  var isMobile = window.innerWidth <= 768;
+  if (isMobile) {
+    openMobileSidebar();
+    return;
+  }
+  var closed = document.body.classList.toggle('sb-closed');
+  // Update CSS variable so all left:var(--sw) elements animate smoothly
+  document.documentElement.style.setProperty('--sw', closed ? '0px' : '220px');
+  localStorage.setItem('sb-closed', closed ? '1' : '0');
+}
+
+function openMobileSidebar() {
+  var sb = document.getElementById('sidebar');
+  var overlay = document.getElementById('sb-overlay');
+  if (sb) sb.classList.add('mobile-open');
+  if (overlay) overlay.classList.add('active');
+}
+
+function closeMobileSidebar() {
+  var sb = document.getElementById('sidebar');
+  var overlay = document.getElementById('sb-overlay');
+  if (sb) sb.classList.remove('mobile-open');
+  if (overlay) overlay.classList.remove('active');
+}
+
+/* ═══ MOBILE FEE BAR ═══ */
+function toggleMobileFeeBar() {
+  var bar = document.getElementById('mobile-fee-bar');
+  if (bar) bar.classList.toggle('open');
+}
+
+function syncMobileFeeBar() {
+  var total = document.getElementById('fpr-total');
+  var kh = document.getElementById('fpr-kh');
+  var mTotal = document.getElementById('mfb-total');
+  var mPhi = document.getElementById('mfb-phi');
+  var mKh = document.getElementById('mfb-kh');
+  if (mTotal && total) mTotal.textContent = total.textContent;
+  if (mPhi && total) mPhi.textContent = total.textContent;
+  if (mKh && kh) mKh.textContent = kh.textContent;
+}
+
+/* Patch calcPkgFee to also sync mobile bar */
+var _origCalcPkgFee = typeof calcPkgFee === 'function' ? calcPkgFee : null;
+if (_origCalcPkgFee) {
+  calcPkgFee = function() {
+    _origCalcPkgFee();
+    setTimeout(syncMobileFeeBar, 50);
+  };
+}
+
+/* ═══ MOBILE MENU BTN VISIBILITY ═══ */
+function updateMobileUI() {
+  var isMobile = window.innerWidth <= 768;
+  var mobileBtn = document.getElementById('mobile-menu-btn');
+  var mobileBar = document.getElementById('mobile-fee-bar');
+  var toggleBtn = document.querySelector('.sb-toggle-btn');
+  if (mobileBtn) mobileBtn.style.display = isMobile ? 'inline-flex' : 'none';
+  if (toggleBtn) toggleBtn.style.display = isMobile ? 'none' : 'flex';
+  if (mobileBar) {
+    // Show only on s1 screen (chào giá) on mobile
+    var isS1 = document.getElementById('s1') && document.getElementById('s1').classList.contains('active');
+    mobileBar.style.display = (isMobile && isS1) ? 'block' : 'none';
+  }
+}
+
+window.addEventListener('resize', function() {
+  updateMobileUI();
+  if (window.innerWidth > 768) closeMobileSidebar();
+});
+
+/* Init on page load */
+window.addEventListener('DOMContentLoaded', function() {
+  // Restore sidebar state
+  if (localStorage.getItem('sb-closed') === '1' && window.innerWidth > 768) {
+    document.body.classList.add('sb-closed');
+    document.documentElement.style.setProperty('--sw', '0px');
+  }
+  updateMobileUI();
+
+  // Patch go() to update mobile bar visibility on screen change
+  var _origGo = typeof go === 'function' ? go : null;
+  if (_origGo) {
+    go = function(n) {
+      _origGo(n);
+      setTimeout(function() { updateMobileUI(); syncMobileFeeBar(); }, 80);
+    };
+  }
+});
 
 </script>
 </body>
